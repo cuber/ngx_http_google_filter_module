@@ -304,16 +304,22 @@ ngx_http_google_request_generater(ngx_http_request_t    * r,
   ngx_str_t * cookie = ngx_http_google_implode_kv(r, ctx->cookies, "; ");
   if (!cookie) return NGX_ERROR;
   
-  if (!r->headers_in.cookies.nelts) {
+  if (!r->headers_in.cookies.nelts)
+  {
     tb = ngx_list_push(&r->headers_in.headers);
     if (!tb) return NGX_ERROR;
+    
     ngx_str_set(&tb->key, "Cookie");
     tb->value = *cookie;
+    tb->hash  = ngx_hash_key_lc(tb->key.data, tb->key.len);
+    
   } else {
+    
     ptr = r->headers_in.cookies.elts;
     for (i = 0; i < r->headers_in.cookies.nelts; i++) {
       ptr[i]->value = *cookie;
     }
+    
   }
   
   ngx_str_t * arg = ngx_http_google_implode_kv(r, ctx->args, "&");

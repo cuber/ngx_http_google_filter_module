@@ -276,7 +276,7 @@ ngx_http_google_response_header_filter(ngx_http_request_t * r)
   // add server header
   ngx_str_set(&tb->key, "Server");
   tb->value = *ctx->host;
-  tb->hash  = ngx_hash_key(tb->key.data, tb->key.len);
+  tb->hash  = ngx_hash_key_lc(tb->key.data, tb->key.len);
   
   // replace with new headers
   r->headers_out.server  = tb;
