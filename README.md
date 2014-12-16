@@ -3,6 +3,7 @@ Nginx Module for Google
 
 #### Description ####
   `ngx_http_google_filter_module` is a filter module which makes google mirror much easier to deploy. The regular expression, uri locations and other complex configurations have been built-in already. The native nginx module ensure the efficiency of handling cookies, gstatic scoures and redirections.
+
   Let's see how `easy` it is to setup a google mirror.
 ```nginx
 location / {
@@ -10,6 +11,7 @@ location / {
 }
 ```
   _What? Are you kidding me?_
+
   _Yes, it's just that simple!_
   
 #### Demo site [https://wen.lu](https://wen.lu) ####
@@ -55,6 +57,9 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 ##### Migrate from existed distribution #####
 ```bash
 #
+# download the same version of nginx source
+# @see http://nginx.org/en/download.html
+#
 # configure with the distribution configuration
 # replace </path/to/> to your real path
 #
@@ -82,7 +87,9 @@ server {
 
 ##### Google Scholar #####
   `google_scholar` depends on `google`, so `google_scholar` cannot be used independent.
+
   Because the tld of google scholar is not the same in different region, so the domain of google scholar should be specific.
+
   Get the tld of google scholar.
 ``` bash
 curl "scholar.google.com" -I
@@ -110,5 +117,6 @@ upstream www.google.com {
 
 #### Copyright & License ####
   All codes are under [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt)
+
   Copyright (C) 2014 by Cube.
 
