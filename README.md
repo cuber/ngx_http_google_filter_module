@@ -11,10 +11,11 @@ location / {
   google on;
 }
 ```
-> _What? Are you kidding me?_
+> _What? Are you kidding me?_   
 > _Yes, it's just that simple!_
   
 #### Demo site [https://wen.lu](https://wen.lu) ####
+[!demo](http://ww4.sinaimg.cn/large/68bd1777jw1enbhxn39z8j212q0lu0uo.jpg)
   
 #### Dependency ####
   1. [`pcre`](http://www.pcre.org/) *regular expression support*
@@ -86,11 +87,9 @@ server {
 ```
 
 ##### Google Scholar #####
-  `google_scholar` depends on `google`, so `google_scholar` cannot be used independent.
-
-  Because the tld of google scholar is not the same in different region, so the domain of google scholar should be specific.
-
-  Get the tld of google scholar.
+`google_scholar` depends on `google`, so `google_scholar` cannot be used independent.    
+Because the tld of google scholar is not the same in different region, so the domain of google scholar should be specific.    
+Get the tld of google scholar.
 ``` bash
 curl "scholar.google.com" -I
 HTTP/1.1 302 Found
@@ -116,7 +115,6 @@ upstream www.google.com {
 ```
 
 #### Copyright & License ####
-  All codes are under [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt)
-
+  All codes are under [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt)    
   Copyright (C) 2014 by Cube.
 
