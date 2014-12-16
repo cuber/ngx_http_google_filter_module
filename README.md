@@ -89,7 +89,7 @@ server {
 ```
 
 ##### Google Scholar #####
-`google_scholar` depends on `google`, so `google_scholar` cannot be used independent.    
+`google_scholar` depends on `google`, so `google_scholar` cannot be used independently.    
 Because the tld of google scholar is not the same in different region, so the domain of google scholar should be specific.    
 Get the tld of google scholar.
 ``` bash

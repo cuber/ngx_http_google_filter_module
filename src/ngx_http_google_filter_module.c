@@ -97,16 +97,8 @@ ngx_http_google_filter(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 #if (NGX_HTTP_SSL)
   ngx_http_ssl_srv_conf_t * sscf;
   sscf = ngx_http_conf_get_module_srv_conf(cf, ngx_http_ssl_module);
-  if (sscf->enable) glcf->ssl = 1;
+  if (sscf->enable == 1) glcf->ssl = 1;
 #endif
-  
-  ngx_str_t name;
-  ngx_str_set(&name, "google");
-  ngx_http_variable_t * var;
-  
-  var = ngx_pcalloc(cf->pool, sizeof(ngx_http_variable_t));
-  var = ngx_http_add_variable(cf, &name, NGX_HTTP_VAR_NOCACHEABLE);
-  var->get_handler = ngx_http_google_filter_get_var;
   
   // inject subs & proxy
   if (ngx_http_google_inject_subs (cf)) return NGX_CONF_ERROR;
@@ -169,6 +161,14 @@ ngx_http_google_filter_post_config(ngx_conf_t * cf)
   // header filter chain
   gmcf->next_header_filter   = ngx_http_top_header_filter;
   ngx_http_top_header_filter = ngx_http_google_response_header_filter;
+  
+  ngx_str_t name;
+  ngx_str_set(&name, "google");
+  ngx_http_variable_t * var;
+  
+  var = ngx_pcalloc(cf->pool, sizeof(ngx_http_variable_t));
+  var = ngx_http_add_variable(cf, &name, NGX_HTTP_VAR_NOCACHEABLE);
+  var->get_handler = ngx_http_google_filter_get_var;
   
   return NGX_OK;
 }

@@ -344,7 +344,7 @@ ngx_http_google_request_handler(ngx_http_request_t * r)
 {
   ngx_http_google_loc_conf_t * glcf;
   glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
-  if (glcf->enable != 1) return NGX_OK;
+  if (glcf->enable != 1) return NGX_DECLINED;
   
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_google_create_ctx(r);
