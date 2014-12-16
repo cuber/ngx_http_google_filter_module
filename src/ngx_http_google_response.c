@@ -118,46 +118,32 @@ ngx_http_google_response_header_set_cookie_pref(ngx_http_request_t    * r,
                                                 ngx_str_t             * v)
 {
   if (ctx->type != ngx_http_google_type_main) return NGX_OK;
+  if (ctx->cookies->nelts > 1)                return NGX_OK;
   
-  ngx_uid_t i;
+  ngx_uint_t i;
   ngx_array_t * kvs  = ngx_http_google_explode_kv(r, v, ":");
   if (!kvs) return NGX_ERROR;
   
-  ngx_array_t * nkvs = ngx_array_create(r->pool, 4, sizeof(ngx_keyval_t));
-  if (!nkvs) return NGX_ERROR;
-  
+  ngx_int_t nw = 0;
   ngx_keyval_t * kv, * hd;
-
+  
   hd = kvs->elts;
   for (i = 0; i < kvs->nelts; i++) {
     kv = hd + i;
-    if (!ngx_strncasecmp(kv->key.data, (u_char *)"LD", 2)) continue;
-    if (!ngx_strncasecmp(kv->key.data, (u_char *)"CR", 2)) continue;
-    if (!ngx_strncasecmp(kv->key.data, (u_char *)"NW", 2)) continue;
-    kv = ngx_array_push(nkvs);
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"LD", 2)) {
+      ngx_str_set(&kv->value, "zh-CN");
+    }
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"NW", 2)) nw = 1;
+  }
+  
+  if (!nw) {
+    kv = ngx_array_push(kvs);
     if (!kv) return NGX_ERROR;
-    *kv = hd[i];
+    ngx_str_set(&kv->key,   "NW");
+    ngx_str_set(&kv->value, "1");
   }
 
-  kv = ngx_array_push(nkvs);
-  if (!kv) return NGX_ERROR;
-  
-  ngx_str_set(&kv->key,   "LD");
-  ngx_str_set(&kv->value, "zh-CN");
-  
-  kv = ngx_array_push(nkvs);
-  if (!kv) return NGX_ERROR;
-  
-  ngx_str_set(&kv->key,   "NW");
-  ngx_str_set(&kv->value, "1");
-  
-  kv = ngx_array_push(nkvs);
-  if (!kv) return NGX_ERROR;
-  
-  ngx_str_set(&kv->key,   "CR");
-  ngx_str_set(&kv->value, "2");
-
-  ngx_str_t * nv = ngx_http_google_implode_kv(r, nkvs, ":");
+  ngx_str_t * nv = ngx_http_google_implode_kv(r, kvs, ":");
   if (!nv) return NGX_ERROR;
   
   *v = *nv;
