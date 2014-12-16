@@ -79,10 +79,12 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
   `resolver` is needed to resolve domains.
 ```nginx
 server {
+  # ... part of server configuration
   resolver 8.8.8.8;
   location / {
     google on;
   }
+  # ...
 }
 ```
 
