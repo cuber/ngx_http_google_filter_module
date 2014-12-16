@@ -2,17 +2,17 @@ Nginx Module for Google
 =======================
 
 #### Description ####
-  `ngx_http_google_filter_module` is a filter module which makes google mirror much easier to deploy. The regular expression, uri locations and other complex configurations have been built-in already. The native nginx module ensure the efficiency of handling cookies, gstatic scoures and redirections.
-
-  Let's see how `easy` it is to setup a google mirror.
+`ngx_http_google_filter_module` is a filter module which makes google mirror much easier to deploy.    
+The regular expression, uri locations and other complex configurations have been built-in already.    
+The native nginx module ensure the efficiency of handling cookies, gstatic scoures and redirections.   
+Let's see how `easy` it is to setup a google mirror.
 ```nginx
 location / {
   google on;
 }
 ```
-  _What? Are you kidding me?_
-
-  _Yes, it's just that simple!_
+> _What? Are you kidding me?_
+> _Yes, it's just that simple!_
   
 #### Demo site [https://wen.lu](https://wen.lu) ####
   
