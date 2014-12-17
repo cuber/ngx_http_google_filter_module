@@ -41,22 +41,14 @@ static ngx_int_t
 ngx_http_google_request_parse_cookie_gz(ngx_http_request_t    * r,
                                         ngx_http_google_ctx_t * ctx)
 {
-  ngx_uint_t i, exist = 0;
+  ngx_uint_t i;
   ngx_keyval_t * kv, * hd = ctx->cookies->elts;
   
   for (i = 0; i < ctx->cookies->nelts; i++) {
     kv = hd + i;
     if (ngx_strncasecmp(kv->key.data, (u_char *)"GZ", 2)) continue;
-    exist = 1;
     ngx_str_set(&kv->value, "Z=0");
     break;
-  }
-  
-  if (!exist) {
-    kv = ngx_array_push(ctx->cookies);
-    if (!kv) return NGX_ERROR;
-    ngx_str_set(&kv->key,   "GZ");
-    ngx_str_set(&kv->value, "Z=0");
   }
   
   return NGX_OK;

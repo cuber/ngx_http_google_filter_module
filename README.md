@@ -3,7 +3,7 @@ Nginx Module for Google
 
 #### Description ####
 `ngx_http_google_filter_module` is a filter module which makes google mirror much easier to deploy.    
-The regular expression, uri locations and other complex configurations have been built-in already.    
+Regular expressions, uri locations and other complex configurations have been built-in already.    
 The native nginx module ensure the efficiency of handling cookies, gstatic scoures and redirections.   
 Let's see how `easy` it is to setup a google mirror.
 ```nginx
@@ -58,14 +58,28 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 ##### Migrate from existed distribution #####
 ```bash
 #
+# get the configuration of existed nginx
+# replace </path/to/> to your real path
+#
+</path/to/>nginx -V
+> nginx version: nginx/ <version>
+> built by gcc 4.x.x
+> configure arguments: <configuration>
+
+#
 # download the same version of nginx source
 # @see http://nginx.org/en/download.html
+# replace <version> to your nginx version
 #
-# configure with the distribution configuration
+wget http://nginx.org/download/nginx-<version>.tar.gz
+  
+#
+# configure nginx
+# replace <configuration> to your nginx configuration
 # replace </path/to/> to your real path
 #
 ./configure \
-  $(</path/to/>nginx -V 2>&1 | grep 'configure arguments' | sed 's/configure arguments://g') \
+  <configuration> \
   --add-module=</path/to/>ngx_http_google_filter_module \
   --add-module=</path/to/>ngx_http_substitutions_filter_module
 #
@@ -119,4 +133,5 @@ upstream www.google.com {
 #### Copyright & License ####
   All codes are under [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt)    
   Copyright (C) 2014 by Cube.
+
 
