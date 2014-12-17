@@ -154,7 +154,9 @@ ngx_http_google_debug(ngx_pool_t * pool, const char * fmt, ...)
   ngx_uint_t len = 4096;
   
   buf = ngx_pcalloc(pool, len + 1);
-  if (!buf) return fprintf(stderr, "ngx_pcalloc(%lu) failed\n", len + 1);
+  if (!buf) {
+    return fprintf(stderr, "ngx_pcalloc(%lu) failed\n", (unsigned long)len);
+  }
   
   va_list args;
   va_start(args, fmt);
