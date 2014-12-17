@@ -218,35 +218,6 @@ ngx_http_google_request_parse_host(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
-ngx_http_google_request_parse_accept_encoding(ngx_http_request_t    * r,
-                                              ngx_http_google_ctx_t * ctx)
-{
-  ngx_uint_t i;
-  ngx_list_part_t * pt = &r->headers_in.headers.part;
-  ngx_table_elt_t * hd = pt->elts, * tb;
-  
-  for (i = 0; /* void */; i++)
-  {
-    if (i >= pt->nelts) {
-      
-      if (pt->next == NULL) break;
-      
-      pt = pt->next;
-      hd = pt->elts;
-      i  = 0;
-    }
-    
-    tb = hd + i;
-    
-    if (!ngx_strncasecmp(tb->key.data, (u_char *)"Accept-Encoding", 15)) {
-      ngx_str_set(&tb->value, ""); break;
-    }
-  }
-  
-  return NGX_OK;
-}
-
-static ngx_int_t
 ngx_http_google_request_parser(ngx_http_request_t    * r,
                                ngx_http_google_ctx_t * ctx)
 {
@@ -279,8 +250,7 @@ ngx_http_google_request_parser(ngx_http_request_t    * r,
   if (!ctx->cookies) return NGX_ERROR;
   
   // parse host
-  if (ngx_http_google_request_parse_host           (r, ctx)) return NGX_ERROR;
-  if (ngx_http_google_request_parse_accept_encoding(r, ctx)) return NGX_ERROR;
+  if (ngx_http_google_request_parse_host(r, ctx)) return NGX_ERROR;
   
   return NGX_OK;
 }
