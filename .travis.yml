@@ -37,4 +37,4 @@ script:
    }" > ../nginx-build/conf/nginx.conf 
   - ../nginx-build/sbin/nginx -t
   - ../nginx-build/sbin/nginx
-  - curl "http://wen.lu" -x 127.0.0.1:9090 -I
+  - curl "http://wen.lu" -x 127.0.0.1:8080 -I
