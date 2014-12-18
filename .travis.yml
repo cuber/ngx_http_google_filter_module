@@ -27,7 +27,7 @@ script:
      include       mime.types;
      default_type  application/octet-stream;
      server {
-       listen 9090;
+       listen 8080;
        server_name wen.lu;
        resolver 8.8.8.8;
        location / {

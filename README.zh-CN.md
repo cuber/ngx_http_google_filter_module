@@ -1,6 +1,8 @@
 Nginx Google 扩展
 =================
 
+[![Build Status](https://travis-ci.org/cuber/ngx_http_google_filter_module.svg?branch=dev)](https://travis-ci.org/cuber/ngx_http_google_filter_module)
+
 #### 扯两句 ####
 `wen.lu` 一路走到现在, 离不开大家的支持!
 > 很多朋友通过各种方式问过我: "你丫怎么不开源啊..."     
