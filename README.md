@@ -121,6 +121,31 @@ location / {
 }
 ```
 
+##### Google Language #####
+The default language can be set throuth `google_language`, if it is not setup, `zh-CN` will be the default language.
+```nginx
+location / {
+  google on;
+  google_scholar "scholar.google.co.jp";
+  # set language to Japanese
+  google_language "ja"; 
+}
+```
+
+Supported languages are listed below.
+```txt
+de en es es-419 fr hr it nl pl pt-BR pt-PT 
+vi tr ru ar th ko zh-CN zh-TW ja
+```
+
+##### Frontend Links Protocal Switcher #####
+You can use `google_ssl off` to adjust the frontend links from `https` to `http` instead, or use `google_ssl on` to adjust the frontend links from `http` to `https`.
+It is useful, if you want to proxy google through another gateway without ssl certificate.
+```txt
+# eg.
+vps(cn) -> vps(hk) -> google
+```
+
 ##### Upstreaming #####
   `upstream` can help you avoid name resolving cost, and decrease the possibility of google robot detection.
 ``` nginx
@@ -135,5 +160,6 @@ upstream www.google.com {
 #### Copyright & License ####
   All codes are under [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt)    
   Copyright (C) 2014 by Cube.
+
 
 

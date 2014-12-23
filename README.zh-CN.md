@@ -234,6 +234,31 @@ location / {
 }
 ```
 
+##### 默认语言偏好 #####
+默认的语言偏好可用 `google_language` 来设置, 如果没有设置, 默认使用 `zh-CN` (中文)
+```nginx
+location / {
+  google on;
+  google_scholar "scholar.google.co.jp";
+  # 设置成德文
+  google_language "de"; 
+}
+```
+
+支持的语言如下.
+```txt
+de en es es-419 fr hr it nl pl pt-BR pt-PT 
+vi tr ru ar th ko zh-CN zh-TW ja
+```
+
+##### 页面链接设置 #####
+可以使用 `google_ssl off` 把页面上的 `https` 链接改为 `http`, 或者是使用 `google_ssl on` 把页面上的 `http` 链接改为 `https`.
+通过 `google_ssl on` 可以让二次代理通过 `http` 协议进行转发, 从而可以不再依赖 ssl 证书.
+```txt
+# 例如
+vps(cn) -> vps(hk) -> google
+```
+
 ##### Upstreaming #####
   `upstream` 减少一次域名解析的开销, 并且通过配置多个网段的 google ip 能够一定程度上减少被 google 机器人识别程序侦测到的几率 (弹验证码).
 ``` nginx
@@ -248,5 +273,6 @@ upstream www.google.com {
 #### Copyright & License ####
   所有代码都遵循 [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt) 开源协议   
   Copyright (C) 2014 by Cube.
+
 
 
