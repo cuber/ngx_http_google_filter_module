@@ -14,9 +14,6 @@ ngx_http_google_response_header_location(ngx_http_request_t    * r,
                                          ngx_http_google_ctx_t * ctx,
                                          ngx_str_t             * v)
 {
-  ngx_http_google_loc_conf_t * glcf;
-  glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
-  
   u_char *  last = v->data + v->len;
   ngx_uint_t add = 0;
   
@@ -78,7 +75,7 @@ ngx_http_google_response_header_location(ngx_http_request_t    * r,
   if (!nv.data) return NGX_ERROR;
   
   ngx_snprintf(nv.data, nv.len, "%s%V%V",
-               glcf->ssl ? "https://" : "http://",
+               ctx->ssl ? "https://" : "http://",
                ctx->host, &uri);
   *v = nv;
   
@@ -117,8 +114,9 @@ ngx_http_google_response_header_set_cookie_pref(ngx_http_request_t    * r,
                                                 ngx_http_google_ctx_t * ctx,
                                                 ngx_str_t             * v)
 {
-  if (ctx->type != ngx_http_google_type_main) return NGX_OK;
-  if (ctx->cookies->nelts)                    return NGX_OK;
+  if (ctx->type != ngx_http_google_type_main &&
+      ctx->type != ngx_http_google_type_scholar) return NGX_OK;
+  if (ctx->cookies->nelts)                       return NGX_OK;
   
   ngx_uint_t i;
   ngx_array_t * kvs  = ngx_http_google_explode_kv(r, v, ":");
@@ -131,7 +129,10 @@ ngx_http_google_response_header_set_cookie_pref(ngx_http_request_t    * r,
   for (i = 0; i < kvs->nelts; i++) {
     kv = hd + i;
     if (!ngx_strncasecmp(kv->key.data, (u_char *)"LD", 2)) {
-      ngx_str_set(&kv->value, "zh-CN");
+      if (ctx->lang->len) kv->value = *ctx->lang;
+      else {
+        ngx_str_set(&kv->value, "zh-CN");
+      }
     }
     if (!ngx_strncasecmp(kv->key.data, (u_char *)"NW", 2)) nw = 1;
   }

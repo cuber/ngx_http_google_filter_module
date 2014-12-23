@@ -9,7 +9,6 @@
 #include "ngx_http_google_util.h"
 #include "ngx_http_google_request.h"
 
-
 static ngx_http_google_ctx_t *
 ngx_http_google_create_ctx(ngx_http_request_t * r)
 {
@@ -24,15 +23,30 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
   if (!ctx->host) return NULL;
   ctx->pass = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
   if (!ctx->pass) return NULL;
-  ctx->uri  = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
-  if (!ctx->uri)  return NULL;
   ctx->arg  = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
   if (!ctx->arg)  return NULL;
   
   // if scholar enable
   ctx->enable.scholar = glcf->scholar.len;
+  ctx->ssl            = 0;
+  ctx->uri            = &r->unparsed_uri;
   ctx->host           = &r->headers_in.host->value;
+  ctx->lang           = &glcf->language;
   ctx->type           = ngx_http_google_type_main;
+  
+  // default language
+  if (!ctx->lang->len) {
+    ngx_str_set(ctx->lang, "zh-CN");
+  }
+  
+#if (NGX_HTTP_SSL)
+  ngx_http_ssl_srv_conf_t * sscf;
+  sscf = ngx_http_get_module_srv_conf(r, ngx_http_ssl_module);
+  if (sscf->enable == 1) ctx->ssl = 1;
+#endif
+  
+  // force ssl settings
+  if (glcf->ssl != NGX_CONF_UNSET) ctx->ssl = glcf->ssl;
   
   return ctx;
 }
@@ -223,7 +237,6 @@ ngx_http_google_request_parser(ngx_http_request_t    * r,
 {
   // parse arg
   u_char * last  = r->unparsed_uri.data + r->unparsed_uri.len;
-  ctx->uri       = &r->unparsed_uri;
   ctx->arg->data = ngx_strlchr(ctx->uri->data, last, '?');
   
   // parse uri
@@ -251,6 +264,37 @@ ngx_http_google_request_parser(ngx_http_request_t    * r,
   
   // parse host
   if (ngx_http_google_request_parse_host(r, ctx)) return NGX_ERROR;
+  
+  // traverse headers
+  ngx_uint_t i, acl = 0;
+  ngx_list_part_t * pt = &r->headers_in.headers.part;
+  ngx_table_elt_t * hd = pt->elts, * tb;
+  
+  for (i = 0; /* void */; i++)
+  {
+    if (i >= pt->nelts) {
+      
+      if (pt->next == NULL) break;
+      
+      pt = pt->next;
+      hd = pt->elts;
+      i  = 0;
+    }
+    
+    tb = hd + i;
+    if (!ngx_strncasecmp(tb->key.data, (u_char *)"Accept-Language", 15)) {
+      acl = 1; tb->value = *ctx->lang;
+    }
+  }
+  
+  if (!acl) {
+    tb = ngx_list_push(&r->headers_in.headers);
+    if (!tb) return NGX_ERROR;
+    
+    ngx_str_set(&tb->key, "Accept-Language");
+    tb->value = *ctx->lang;
+    tb->hash  = ngx_hash_key_lc(tb->key.data, tb->key.len);
+  }
   
   return NGX_OK;
 }

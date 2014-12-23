@@ -11,7 +11,7 @@
 
 #include "ngx_http_google_filter_module.h"
 
-char * ngx_http_google_inject_subs (ngx_conf_t * cf);
-char * ngx_http_google_inject_proxy(ngx_conf_t * cf);
+char * ngx_http_google_inject_subs (ngx_conf_t *);
+char * ngx_http_google_inject_proxy(ngx_conf_t *);
 
 #endif /* defined(_NGX_HTTP_GOOGLE_INJECT_H) */
