@@ -313,7 +313,7 @@ server {
   # ...
 }
 
-upstream {
+upstream www.google.com {
   server < vps(hk) 的 ip >:80;
 }
 

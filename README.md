@@ -172,7 +172,7 @@ server {
   # ...
 }
 
-upstream {
+upstream www.google.com {
   server < ip of vps(hk) >:80;
 }
 
