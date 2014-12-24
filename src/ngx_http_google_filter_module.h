@@ -23,8 +23,9 @@ typedef enum {
 } ngx_http_google_type_t;
 
 typedef struct {
-  ngx_flag_t ssl, enable;
-  ngx_str_t  scholar, language;
+  ngx_flag_t  enable;
+  ngx_str_t   scholar, language;
+  ngx_array_t * ssloff; /* array ot ngx_str_t */
 } ngx_http_google_loc_conf_t;
 
 typedef struct {

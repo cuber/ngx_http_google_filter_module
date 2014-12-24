@@ -45,9 +45,6 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
   if (sscf->enable == 1) ctx->ssl = 1;
 #endif
   
-  // force ssl settings
-  if (glcf->ssl != NGX_CONF_UNSET) ctx->ssl = glcf->ssl;
-  
   return ctx;
 }
 

@@ -30,11 +30,11 @@ location / {
 > *i386, x86_64 均适用*
 
 ##### 最简安装 #####
-```
+```bash
 #
-# 安装 gcc
+# 安装 gcc & git
 #
-apt-get install build-essential
+apt-get install build-essential git
 
 #
 # 下载最新版源码
@@ -115,9 +115,9 @@ make; make install
 ##### 从发行版迁移 #####
 ``` bash
 #
-# 安装 gcc
+# 安装 gcc & git
 #
-apt-get install build-essential
+apt-get install build-essential git
 
 #
 # 安装发行版
@@ -132,7 +132,36 @@ nginx -V
 # nginx version: nginx/1.4.7
 # built by gcc 4.8.2 (Ubuntu 4.8.2-19ubuntu1)
 # TLS SNI support enabled
-# configure arguments: --with-cc-opt='-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2' --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=/var/log/nginx/error.log --lock-path=/var/lock/nginx.lock --pid-path=/run/nginx.pid --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --with-debug --with-pcre-jit --with-ipv6 --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-http_addition_module --with-http_dav_module --with-http_geoip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_spdy_module --with-http_sub_module --with-http_xslt_module --with-mail --with-mail_ssl_module --add-module=../nginx-http-modules/ngx_http_google_filter_module --add-module=../nginx-http-modules/subs_filter
+# configure arguments: 
+#  --with-cc-opt='-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2' \
+#  --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' \
+#  --prefix=/usr/share/nginx \
+#  --conf-path=/etc/nginx/nginx.conf \
+#  --http-log-path=/var/log/nginx/access.log \
+#  --error-log-path=/var/log/nginx/error.log \
+#  --lock-path=/var/lock/nginx.lock \
+#  --pid-path=/run/nginx.pid \
+#  --http-client-body-temp-path=/var/lib/nginx/body \
+#  --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
+#  --http-proxy-temp-path=/var/lib/nginx/proxy \
+#  --http-scgi-temp-path=/var/lib/nginx/scgi \
+#  --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
+#  --with-debug \
+#  --with-pcre-jit \
+#  --with-ipv6 \
+#  --with-http_ssl_module \
+#  --with-http_stub_status_module \
+#  --with-http_realip_module \
+#  --with-http_addition_module \
+#  --with-http_dav_module \
+#  --with-http_geoip_module \
+#  --with-http_gzip_static_module \
+#  --with-http_image_filter_module \
+#  --with-http_spdy_module \
+#  --with-http_sub_module \
+#  --with-http_xslt_module \
+#  --with-mail \
+#  --with-mail_ssl_module
 
 #
 # 下载对应 nginx 大版本
@@ -251,22 +280,54 @@ de en es es-419 fr hr it nl pl pt-BR pt-PT
 vi tr ru ar th ko zh-CN zh-TW ja
 ```
 
-##### 页面链接设置 #####
-可以使用 `google_ssl off` 把页面上的 `https` 链接改为 `http`, 或者是使用 `google_ssl on` 把页面上的 `http` 链接改为 `https`.
-通过 `google_ssl on` 可以让二次代理通过 `http` 协议进行转发, 从而可以不再依赖 ssl 证书.
-```txt
-# 例如
-vps(cn) -> vps(hk) -> google
-```
-
 ##### Upstreaming #####
-  `upstream` 减少一次域名解析的开销, 并且通过配置多个网段的 google ip 能够一定程度上减少被 google 机器人识别程序侦测到的几率 (弹验证码).
+`upstream` 减少一次域名解析的开销, 并且通过配置多个网段的 google ip 能够一定程度上减少被 google 机器人识别程序侦测到的几率 (弹验证码).
 ``` nginx
 upstream www.google.com {
   server 173.194.38.1:443;
   server 173.194.38.2:443;
   server 173.194.38.3:443;
   server 173.194.38.4:443;
+}
+```
+
+##### Proxy Protocal #####
+默认采用 `https` 与后端服务器通信.    
+你可以使用 `google_ssl_off` 来强制将一些域名降到 `http` 协议.    
+如果你想让, 这个设置可以让一些通过跳板机二次代理的域名用 `http` 协议进行转发, 从而可以不再依赖 `ssl` 证书.
+```nginx
+#
+# 例如 'www.googl.com' 按如下方式代理
+# vps(hk) -> vps(us) -> google
+#
+
+#
+# vps(hk) 配置
+#
+server {
+  # ...
+  location / {
+    google on;
+    google_ssl_off "www.google.com";
+  }
+  # ...
+}
+
+upstream {
+  server < vps(hk) 的 ip >:80;
+}
+
+#
+# vps(us) 配置
+#
+server {
+  listen 80;
+  server_name www.google.com;
+  # ...
+  location / {
+    proxy_pass https://www.google.com;
+  }
+  # ...
 }
 ```
 

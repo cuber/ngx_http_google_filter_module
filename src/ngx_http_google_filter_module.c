@@ -55,14 +55,6 @@ ngx_http_google_filter_commands[] = {
     NULL
   },
   {
-    ngx_string("google_ssl"),
-    NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-    ngx_conf_set_flag_slot,
-    NGX_HTTP_LOC_CONF_OFFSET,
-    offsetof(ngx_http_google_loc_conf_t, ssl),
-    NULL
-  },
-  {
     ngx_string("google_scholar"),
     NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
     ngx_conf_set_str_slot,
@@ -76,6 +68,14 @@ ngx_http_google_filter_commands[] = {
     ngx_http_google_filter_language,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_google_loc_conf_t, language),
+    NULL
+  },
+  {
+    ngx_string("google_ssl_off"),
+    NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+    ngx_conf_set_str_array_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_google_loc_conf_t, ssloff),
     NULL
   },
   ngx_null_command
@@ -204,8 +204,8 @@ ngx_http_google_filter_create_loc_conf(ngx_conf_t * cf)
   conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_google_loc_conf_t));
   if (conf == NULL) return NULL;
   
-  conf->ssl    = NGX_CONF_UNSET;
   conf->enable = NGX_CONF_UNSET;
+  conf->ssloff = NGX_CONF_UNSET_PTR;
   
   return conf;
 }
@@ -217,8 +217,8 @@ ngx_http_google_filter_merge_loc_conf(ngx_conf_t * cf, void * parent,
   ngx_http_google_loc_conf_t * prev = parent;
   ngx_http_google_loc_conf_t * conf = child;
   
-  ngx_conf_merge_value    (conf->ssl,      prev->ssl,      NGX_CONF_UNSET);
   ngx_conf_merge_value    (conf->enable,   prev->enable,   NGX_CONF_UNSET);
+  ngx_conf_merge_ptr_value(conf->ssloff,   prev->ssloff,   NGX_CONF_UNSET_PTR);
   ngx_conf_merge_str_value(conf->scholar,  prev->scholar,  "");
   ngx_conf_merge_str_value(conf->language, prev->language, "zh-CN");
   
@@ -273,10 +273,28 @@ ngx_http_google_filter_google_var(ngx_http_request_t        * r,
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
   
-  ngx_int_t ssl = 0;
+  ngx_http_google_loc_conf_t * glcf;
+  glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
   
-#if (NGX_HTTP_SSL)
-  ssl = ctx->type != ngx_http_google_type_scholar;
+  ngx_int_t ssl = 1;
+  
+  if (glcf->ssloff != NGX_CONF_UNSET_PTR) {
+    
+    ngx_uint_t   i;
+    ngx_str_t * hd = glcf->ssloff->elts, * domain;
+    
+    for (i = 0; i < glcf->ssloff->nelts; i++) {
+      domain = hd + i;
+      if (ctx->pass->len != domain->len)                           continue;
+      if (ngx_strncmp(ctx->pass->data, domain->data, domain->len)) continue;
+      ssl = 0; break;
+    }
+  }
+  
+  if (ctx->type == ngx_http_google_type_scholar) ssl = 0;
+  
+#if ! (NGX_HTTP_SSL)
+  ssl = 0;
 #endif
   
   v->len = 7 + (unsigned)ctx->pass->len;
@@ -296,19 +314,10 @@ ngx_http_google_filter_google_protocal_var(ngx_http_request_t        * r,
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
   
-  if (ctx->ssl) {
-    v->data = (u_char *)"https://";
-    v->len  = 8;
-  } else {
-    v->data = (u_char *)"http://";
-    v->len  = 7;
-  }
-  
   v->len  = (ctx->ssl ? 8 : 7) + (unsigned)r->headers_in.server.len;
   v->data = ngx_pcalloc(r->pool,  v->len);
   
-  ngx_snprintf(v->data, v->len, "%s%V",
-               ctx->ssl ? "https://" : "http://",
+  ngx_snprintf(v->data, v->len, "%s%V", ctx->ssl ? "https://" : "http://",
                &r->headers_in.server);
   
   return NGX_OK;

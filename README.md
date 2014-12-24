@@ -127,8 +127,8 @@ The default language can be set throuth `google_language`, if it is not setup, `
 location / {
   google on;
   google_scholar "scholar.google.co.jp";
-  # set language to Japanese
-  google_language "ja"; 
+  # set language to German
+  google_language "de"; 
 }
 ```
 
@@ -138,16 +138,8 @@ de en es es-419 fr hr it nl pl pt-BR pt-PT
 vi tr ru ar th ko zh-CN zh-TW ja
 ```
 
-##### Frontend Links Protocal Switcher #####
-You can use `google_ssl off` to adjust the frontend links from `https` to `http` instead, or use `google_ssl on` to adjust the frontend links from `http` to `https`.
-It is useful, if you want to proxy google through another gateway without ssl certificate.
-```txt
-# eg.
-vps(cn) -> vps(hk) -> google
-```
-
 ##### Upstreaming #####
-  `upstream` can help you avoid name resolving cost, and decrease the possibility of google robot detection.
+`upstream` can help you to avoid name resolving cost, decrease the possibility of google robot detection and proxy throuth some specific servers.   
 ``` nginx
 upstream www.google.com {
   server 173.194.38.1:443;
@@ -156,6 +148,48 @@ upstream www.google.com {
   server 173.194.38.4:443;
 }
 ```
+
+##### Proxy Protocal #####
+In default, the proxy will use `https` to communicate with backend servers.      
+You can use `google_ssl_off` to force some domains fall back to `http` protocal.      
+It is useful, if you want to proxy some domains through another gateway without ssl certificate.
+```nginx
+#
+# eg. 
+# i want to proxy the domain 'www.googl.com' like this
+# vps(hk) -> vps(us) -> google
+#
+
+#
+# configuration of vps(hk)
+#
+server {
+  # ...
+  location / {
+    google on;
+    google_ssl_off "www.google.com";
+  }
+  # ...
+}
+
+upstream {
+  server < ip of vps(hk) >:80;
+}
+
+#
+# configuration of vps(us)
+#
+server {
+  listen 80;
+  server_name www.google.com;
+  # ...
+  location / {
+    proxy_pass https://www.google.com;
+  }
+  # ...
+}
+```
+
 
 #### Copyright & License ####
   All codes are under [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt)    
