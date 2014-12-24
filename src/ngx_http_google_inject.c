@@ -8,6 +8,9 @@
 
 #include "ngx_http_google_inject.h"
 
+extern ngx_module_t ngx_http_proxy_module;
+extern ngx_module_t ngx_http_subs_filter_module;
+
 static char *
 ngx_http_google_injcet_args(ngx_conf_t  *  cf,
                             ngx_array_t ** args,

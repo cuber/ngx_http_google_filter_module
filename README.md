@@ -138,6 +138,23 @@ de en es es-419 fr hr it nl pl pt-BR pt-PT
 vi tr ru ar th ko zh-CN zh-TW ja
 ```
 
+##### Spider Allowance #####
+The spider of any search engines are now allowed to crawl google mirror.    
+Default `robots.txt` listed below was build-in aleady.
+```txt
+User-agent: *
+Disallow: /
+```     
+If `google_robots_allow` set to `on`, the `robots.txt` will be replaced with the version of google itself.   
+```nginx
+  #...
+  location / {
+    google on;
+    google_robots_allow on;
+  }
+  #...
+```
+
 ##### Upstreaming #####
 `upstream` can help you to avoid name resolving cost, decrease the possibility of google robot detection and proxy throuth some specific servers.   
 ``` nginx
@@ -156,7 +173,7 @@ It is useful, if you want to proxy some domains through another gateway without 
 ```nginx
 #
 # eg. 
-# i want to proxy the domain 'www.googl.com' like this
+# i want to proxy the domain 'www.google.com' like this
 # vps(hk) -> vps(us) -> google
 #
 

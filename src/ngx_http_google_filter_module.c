@@ -78,6 +78,14 @@ ngx_http_google_filter_commands[] = {
     offsetof(ngx_http_google_loc_conf_t, ssloff),
     NULL
   },
+  {
+    ngx_string("google_robots_allow"),
+    NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+    ngx_conf_set_flag_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_google_loc_conf_t, robots),
+    NULL
+  },
   ngx_null_command
 };
 
@@ -204,6 +212,7 @@ ngx_http_google_filter_create_loc_conf(ngx_conf_t * cf)
   conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_google_loc_conf_t));
   if (conf == NULL) return NULL;
   
+  conf->robots = NGX_CONF_UNSET;
   conf->enable = NGX_CONF_UNSET;
   conf->ssloff = NGX_CONF_UNSET_PTR;
   
@@ -217,6 +226,7 @@ ngx_http_google_filter_merge_loc_conf(ngx_conf_t * cf, void * parent,
   ngx_http_google_loc_conf_t * prev = parent;
   ngx_http_google_loc_conf_t * conf = child;
   
+  ngx_conf_merge_value    (conf->robots,   prev->robots,   NGX_CONF_UNSET);
   ngx_conf_merge_value    (conf->enable,   prev->enable,   NGX_CONF_UNSET);
   ngx_conf_merge_ptr_value(conf->ssloff,   prev->ssloff,   NGX_CONF_UNSET_PTR);
   ngx_conf_merge_str_value(conf->scholar,  prev->scholar,  "");
@@ -262,6 +272,10 @@ ngx_http_google_filter_post_config(ngx_conf_t * cf)
   // header filter chain
   gmcf->next_header_filter   = ngx_http_top_header_filter;
   ngx_http_top_header_filter = ngx_http_google_response_header_filter;
+  
+  // body filter chain
+  gmcf->next_body_filter     = ngx_http_top_body_filter;
+  ngx_http_top_body_filter   = ngx_http_google_response_body_filter;
   
   return NGX_OK;
 }

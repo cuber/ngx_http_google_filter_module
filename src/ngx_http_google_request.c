@@ -39,6 +39,9 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
     ngx_str_set(ctx->lang, "zh-CN");
   }
   
+  ctx->robots = (ctx->uri->len == 11 &&
+                 !ngx_strncmp(ctx->uri->data, "/robots.txt", 11));
+  
 #if (NGX_HTTP_SSL)
   ngx_http_ssl_srv_conf_t * sscf;
   sscf = ngx_http_get_module_srv_conf(r, ngx_http_ssl_module);
@@ -181,7 +184,7 @@ ngx_http_google_request_parse_main(ngx_http_request_t    * r,
                                    ngx_http_google_ctx_t * ctx)
 {
   ngx_str_set(ctx->pass, "www.google.com");
-  if (!ctx->cookies->nelts) {
+  if (!ctx->cookies->nelts && !ctx->robots) {
     ngx_str_set(ctx->uri, "/ncr");
   }
   if (ngx_http_google_request_parse_cookie_gz(r, ctx)) return NGX_ERROR;

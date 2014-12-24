@@ -14,4 +14,7 @@
 ngx_int_t
 ngx_http_google_response_header_filter(ngx_http_request_t * r);
 
+ngx_int_t
+ngx_http_google_response_body_filter(ngx_http_request_t *, ngx_chain_t *);
+
 #endif /* defined(_NGX_HTTP_GOOGLE_RESPONSE_H) */

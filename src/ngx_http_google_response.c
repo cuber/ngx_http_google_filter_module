@@ -193,7 +193,7 @@ ngx_http_google_response_header_set_cookie(ngx_http_request_t    * r,
   
   // unset this key
   if (!kvs->nelts) {
-    tb->key.len = 0; return NGX_OK;
+    tb->hash = 0; return NGX_OK;
   }
   
   ngx_str_t * set_cookie = ngx_http_google_implode_kv(r, kvs, "; ");
@@ -217,9 +217,6 @@ ngx_http_google_response_header_filter(ngx_http_request_t * r)
   
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
-  
-  ngx_list_t * hds = ngx_list_create(r->pool, 4, sizeof(ngx_table_elt_t));
-  if (!hds) return NGX_ERROR;
   
   ngx_uint_t i;
   ngx_list_part_t * pt = &r->headers_out.headers.part;
@@ -249,25 +246,49 @@ ngx_http_google_response_header_filter(ngx_http_request_t * r)
         return NGX_ERROR;
       }
     }
-    
-    if (!tb->key.len) continue;
-    tb = ngx_list_push(hds);
-    if (!tb) return NGX_ERROR;
-    
-    *tb = hd[i];
   }
   
-  tb = ngx_list_push(hds);
+  tb = ngx_list_push(&r->headers_out.headers);
   if (!tb) return NGX_ERROR;
   
   // add server header
   ngx_str_set(&tb->key, "Server");
   tb->value = *ctx->host;
-  tb->hash  = ngx_hash_key_lc(tb->key.data, tb->key.len);
+  tb->hash  = 1;
   
   // replace with new headers
-  r->headers_out.server  = tb;
-  r->headers_out.headers = *hds;
+  r->headers_out.server = tb;
   
   return gmcf->next_header_filter(r);
+}
+
+ngx_int_t
+ngx_http_google_response_body_filter(ngx_http_request_t * r, ngx_chain_t * in)
+{
+  ngx_http_google_main_conf_t * gmcf;
+  gmcf = ngx_http_get_module_main_conf(r, ngx_http_google_filter_module);
+  
+  ngx_http_google_loc_conf_t * glcf;
+  glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
+  if (glcf->enable != 1) return gmcf->next_body_filter(r, in);
+  
+  ngx_http_google_ctx_t * ctx;
+  ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
+  
+  if (!ctx->robots)      return gmcf->next_body_filter(r, in);
+  if (glcf->robots == 1) return gmcf->next_body_filter(r, in);
+  
+  ngx_chain_t out;
+  ngx_memzero(&out, sizeof(ngx_chain_t));
+  
+  ngx_str_t text;
+  ngx_str_set(&text, "User-agent: *" CRLF
+                     "Disallow: /"   CRLF);
+  
+  out.buf = ngx_create_temp_buf(r->pool, text.len);
+  if (!out.buf) return NGX_ERROR;
+  out.buf->last_buf = 1;
+  
+  out.buf->last = ngx_copy(out.buf->last, text.data, text.len);
+  return gmcf->next_body_filter(r, &out);
 }

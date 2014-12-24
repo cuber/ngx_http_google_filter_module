@@ -280,6 +280,23 @@ de en es es-419 fr hr it nl pl pt-BR pt-PT
 vi tr ru ar th ko zh-CN zh-TW ja
 ```
 
+##### 搜索引擎爬虫许可 #####
+任何搜索引擎爬虫都不被允许爬取 google 镜像       
+如下的默认 `robots.txt` 已经内置.
+```txt
+User-agent: *
+Disallow: /
+```     
+如果想要使用 `google` 自己的 `robots.txt` 请将 `google_robots_allow` 设为 `on`
+```nginx
+  #...
+  location / {
+    google on;
+    google_robots_allow on;
+  }
+  #...
+```
+
 ##### Upstreaming #####
 `upstream` 减少一次域名解析的开销, 并且通过配置多个网段的 google ip 能够一定程度上减少被 google 机器人识别程序侦测到的几率 (弹验证码).
 ``` nginx
@@ -297,7 +314,7 @@ upstream www.google.com {
 如果你想让, 这个设置可以让一些通过跳板机二次代理的域名用 `http` 协议进行转发, 从而可以不再依赖 `ssl` 证书.
 ```nginx
 #
-# 例如 'www.googl.com' 按如下方式代理
+# 例如 'www.google.com' 按如下方式代理
 # vps(hk) -> vps(us) -> google
 #
 
