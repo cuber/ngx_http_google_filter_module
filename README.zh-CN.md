@@ -310,8 +310,8 @@ upstream www.google.com {
 
 ##### Proxy Protocal #####
 默认采用 `https` 与后端服务器通信.    
-你可以使用 `google_ssl_off` 来强制将一些域名降到 `http` 协议.    
-如果你想让, 这个设置可以让一些通过跳板机二次代理的域名用 `http` 协议进行转发, 从而可以不再依赖 `ssl` 证书.
+你可以使用 `google_ssl_off` 来强制将一些域降到 `http` 协议.    
+这个设置可以让一些需要二次转发的域通过 `http` 协议进行转发, 从而不再依赖 `ssl` 证书.
 ```nginx
 #
 # 例如 'www.google.com' 按如下方式代理

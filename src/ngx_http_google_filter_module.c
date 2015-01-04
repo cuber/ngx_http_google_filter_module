@@ -72,7 +72,7 @@ ngx_http_google_filter_commands[] = {
   },
   {
     ngx_string("google_ssl_off"),
-    NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+    NGX_HTTP_LOC_CONF | NGX_CONF_1MORE,
     ngx_conf_set_str_array_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_google_loc_conf_t, ssloff),
