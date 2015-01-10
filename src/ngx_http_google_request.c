@@ -27,7 +27,6 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
   if (!ctx->arg)  return NULL;
   
   // if scholar enable
-  ctx->enable.scholar = glcf->scholar.len;
   ctx->ssl            = 0;
   ctx->uri            = &r->unparsed_uri;
   ctx->host           = &r->headers_in.host->value;
@@ -94,10 +93,9 @@ static ngx_int_t
 ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
                                       ngx_http_google_ctx_t * ctx)
 {
-  ngx_http_google_loc_conf_t * glcf;
-  glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
-  
-  if (ctx->uri->len == 12 && ctx->args) {
+  if (!ctx->cookies->nelts) {
+    ngx_str_set(ctx->uri, "/ncr");
+  } else if (ctx->uri->len == 12 && ctx->args) {
     
     u_char * refer = ctx->uri->data + 9;
     
@@ -158,7 +156,7 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
     }
   }
   
-  ctx->pass = &glcf->scholar;
+  ngx_str_set(ctx->pass, "scholar.google.com");
   
   return NGX_OK;
 }
@@ -195,6 +193,8 @@ static ngx_int_t
 ngx_http_google_request_parse_host(ngx_http_request_t    * r,
                                    ngx_http_google_ctx_t * ctx)
 {
+  ngx_http_google_loc_conf_t * glcf;
+  glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
   
   // redirect
   if (ctx->uri->len > 2 && !ngx_strncmp(ctx->uri->data, "/!", 2))
@@ -204,7 +204,7 @@ ngx_http_google_request_parse_host(ngx_http_request_t    * r,
   }
   
   // scholar
-  if (ctx->enable.scholar &&
+  if (glcf->scholar == 1 &&
       ctx->uri->len > 7   &&
       (!ngx_strncasecmp(ctx->uri->data, (u_char *)"/scholar", 8) ||
        !ngx_strncasecmp(ctx->uri->data, (u_char *)"/schhp",   6)))

@@ -57,7 +57,7 @@ ngx_http_google_filter_commands[] = {
   {
     ngx_string("google_scholar"),
     NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-    ngx_conf_set_str_slot,
+    ngx_conf_set_flag_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_google_loc_conf_t, scholar),
     NULL
@@ -212,9 +212,10 @@ ngx_http_google_filter_create_loc_conf(ngx_conf_t * cf)
   conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_google_loc_conf_t));
   if (conf == NULL) return NULL;
   
-  conf->robots = NGX_CONF_UNSET;
-  conf->enable = NGX_CONF_UNSET;
-  conf->ssloff = NGX_CONF_UNSET_PTR;
+  conf->robots  = NGX_CONF_UNSET;
+  conf->enable  = NGX_CONF_UNSET;
+  conf->scholar = NGX_CONF_UNSET;
+  conf->ssloff  = NGX_CONF_UNSET_PTR;
   
   return conf;
 }
@@ -228,8 +229,8 @@ ngx_http_google_filter_merge_loc_conf(ngx_conf_t * cf, void * parent,
   
   ngx_conf_merge_value    (conf->robots,   prev->robots,   NGX_CONF_UNSET);
   ngx_conf_merge_value    (conf->enable,   prev->enable,   NGX_CONF_UNSET);
+  ngx_conf_merge_value    (conf->scholar,  prev->scholar,  NGX_CONF_UNSET);
   ngx_conf_merge_ptr_value(conf->ssloff,   prev->ssloff,   NGX_CONF_UNSET_PTR);
-  ngx_conf_merge_str_value(conf->scholar,  prev->scholar,  "");
   ngx_conf_merge_str_value(conf->language, prev->language, "zh-CN");
   
   return NGX_CONF_OK;
@@ -304,8 +305,6 @@ ngx_http_google_filter_google_var(ngx_http_request_t        * r,
       ssl = 0; break;
     }
   }
-  
-  if (ctx->type == ngx_http_google_type_scholar) ssl = 0;
   
 #if ! (NGX_HTTP_SSL)
   ssl = 0;

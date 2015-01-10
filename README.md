@@ -106,18 +106,12 @@ server {
 
 ##### Google Scholar #####
 `google_scholar` depends on `google`, so `google_scholar` cannot be used independently.    
-Because the tld of google scholar is not the same in different region, so the domain of google scholar should be specific.    
-Get the tld of google scholar.
-``` bash
-curl "scholar.google.com" -I
-HTTP/1.1 302 Found
-Location: http://scholar.google.co.jp/
-```
-  Configuration nginx.
+Nowadays google scholar has migrate from `http` to `https`, and `ncr` is supported, so the `tld` of google scholar is no more needed.     
+Configuration nginx.
 ``` nginx
 location / {
   google on;
-  google_scholar "scholar.google.co.jp";
+  google_scholar on;
 }
 ```
 

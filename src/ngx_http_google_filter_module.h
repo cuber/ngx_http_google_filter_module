@@ -23,8 +23,8 @@ typedef enum {
 } ngx_http_google_type_t;
 
 typedef struct {
-  ngx_flag_t  enable, robots;
-  ngx_str_t   scholar, language;
+  ngx_str_t   language;
+  ngx_flag_t  enable, robots, scholar;
   ngx_array_t * ssloff; /* array ot ngx_str_t */
 } ngx_http_google_loc_conf_t;
 
@@ -39,7 +39,6 @@ typedef struct {
   ngx_str_t   * host, * pass, * lang, * uri, * arg;
   ngx_array_t * args, * cookies; /* array of ngx_keyval_t */
   ngx_http_google_type_t type;
-  struct { ngx_int_t scholar; } enable;
 } ngx_http_google_ctx_t;
 
 extern ngx_module_t ngx_http_google_filter_module;

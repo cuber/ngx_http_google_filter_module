@@ -246,20 +246,12 @@ server {
 
 ##### 谷歌学术 #####
 `google_scholar` 依赖于 `google`, 所以 `google_scholar` 无法独立使用.    
-由于不同区域的谷歌学术顶级域不同, 所以需要明确配置谷歌学术的域名.
-``` bash
-# 
-# 获取谷歌学术的域名的方法
-#
-curl "scholar.google.com" -I
-HTTP/1.1 302 Found
-Location: http://scholar.google.co.jp/
-```
-  配置 nginx
+由于谷歌学术近日升级, 强制使用 `https` 协议, 并且 `ncr` 已经支持, 所以不再需要指定谷歌学术的 `tld`     
+配置 nginx
 ``` nginx
 location / {
   google on;
-  google_scholar "scholar.google.co.jp";
+  google_scholar on;
 }
 ```
 

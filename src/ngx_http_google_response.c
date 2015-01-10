@@ -14,6 +14,9 @@ ngx_http_google_response_header_location(ngx_http_request_t    * r,
                                          ngx_http_google_ctx_t * ctx,
                                          ngx_str_t             * v)
 {
+  ngx_http_google_loc_conf_t * glcf;
+  glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
+  
   u_char *  last = v->data + v->len;
   ngx_uint_t add = 0;
   
@@ -53,7 +56,7 @@ ngx_http_google_response_header_location(ngx_http_request_t    * r,
     if (!nuri.data) return NGX_ERROR;
     ngx_snprintf(nuri.data, nuri.len, "/ipv%c%V", host.data[3], &uri);
     uri = nuri;
-  } else if (ctx->enable.scholar &&
+  } else if (glcf->scholar == 1 &&
              !ngx_strncasecmp(host.data, (u_char *)"scholar", 7))
   {
     if (uri.len &&
