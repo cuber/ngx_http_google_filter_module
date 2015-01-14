@@ -132,26 +132,46 @@ static ngx_http_variable_t ngx_http_google_vars[] = {
 };
 
 static ngx_str_t ngx_http_google_language[] = {
-  ngx_string("de"),
-  ngx_string("en"),
-  ngx_string("es"),
-  ngx_string("es-419"),
-  ngx_string("fr"),
-  ngx_string("hr"),
-  ngx_string("it"),
-  ngx_string("nl"),
-  ngx_string("pl"),
-  ngx_string("pt-BR"),
-  ngx_string("pt-PT"),
-  ngx_string("vi"),
-  ngx_string("tr"),
-  ngx_string("ru"),
-  ngx_string("ar"),
-  ngx_string("th"),
-  ngx_string("ko"),
-  ngx_string("zh-CN"),
-  ngx_string("zh-TW"),
-  ngx_string("ja"),
+  ngx_string("ar"),    // Arabic
+  ngx_string("bg"),    // Bulgarian
+  ngx_string("ca"),    // Catalan
+  ngx_string("zh-CN"), // Chinese (Simplified)
+  ngx_string("zh-TW"), // Chinese (Traditional)
+  ngx_string("hr"),    // Croatian
+  ngx_string("cs"),    // Czech
+  ngx_string("da"),    // Danish
+  ngx_string("nl"),    // Dutch
+  ngx_string("en"),    // English
+  ngx_string("tl"),    // Filipino
+  ngx_string("fi"),    // Finnish
+  ngx_string("fr"),    // French
+  ngx_string("de"),    // German
+  ngx_string("el"),    // Greek
+  ngx_string("iw"),    // Hebrew
+  ngx_string("hi"),    // Hindi
+  ngx_string("hu"),    // Hungarian
+  ngx_string("id"),    // Indonesian
+  ngx_string("it"),    // Italian
+  ngx_string("ja"),    // Japanese
+  ngx_string("ko"),    // Korean
+  ngx_string("lv"),    // Latvian
+  ngx_string("lt"),    // Lithuanian
+  ngx_string("no"),    // Norwegian
+  ngx_string("fa"),    // Persian
+  ngx_string("pl"),    // Polish
+  ngx_string("pt-BR"), // Portuguese (Brazil)
+  ngx_string("pt-PT"), // Portuguese (Portugal)
+  ngx_string("ro"),    // Romanian
+  ngx_string("ru"),    // Russian
+  ngx_string("sr"),    // Serbian
+  ngx_string("sk"),    // Slovak
+  ngx_string("sl"),    // Slovenian
+  ngx_string("es"),    // Spanish
+  ngx_string("sv"),    // Swedish
+  ngx_string("th"),    // Thai
+  ngx_string("tr"),    // Turkish
+  ngx_string("uk"),    // Ukrainian
+  ngx_string("vi"),    // Vietnamese
   ngx_null_string
 };
 

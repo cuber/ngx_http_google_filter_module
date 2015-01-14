@@ -175,6 +175,13 @@ ngx_http_google_inject_subs(ngx_conf_t * cf)
     
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 3,
+                                         "scholar\\.google\\.[0-9a-z.]+\\\\?/scholar",
+                                         "$host/scholar",
+                                         "igr"))
+      break;
+    
+    if (ngx_http_google_inject_subs_args(cf,
+                                         "subs_filter", 3,
                                          "scholar\\.google\\.[0-9a-z.]+",
                                          "$host/scholar",
                                          "igr"))

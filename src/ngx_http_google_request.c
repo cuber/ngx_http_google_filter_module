@@ -26,12 +26,10 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
   ctx->arg  = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
   if (!ctx->arg)  return NULL;
   
-  // if scholar enable
-  ctx->ssl            = 0;
-  ctx->uri            = &r->unparsed_uri;
-  ctx->host           = &r->headers_in.host->value;
-  ctx->lang           = &glcf->language;
-  ctx->type           = ngx_http_google_type_main;
+  ctx->uri  = &r->unparsed_uri;
+  ctx->host = &r->headers_in.host->value;
+  ctx->lang = &glcf->language;
+  ctx->type = ngx_http_google_type_main;
   
   // default language
   if (!ctx->lang->len) {
@@ -68,6 +66,24 @@ ngx_http_google_request_parse_cookie_gz(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
+ngx_http_google_request_parse_cookie_pref(ngx_http_request_t    * r,
+                                          ngx_http_google_ctx_t * ctx)
+{
+  ngx_uint_t i;
+  ngx_keyval_t * kv, * hd = ctx->cookies->elts;
+  
+  for (i = 0; i < ctx->cookies->nelts; i++) {
+    kv = hd + i;
+    if (ngx_strncasecmp(kv->key.data, (u_char *)"PREF", 2)) continue;
+    u_char * last = kv->value.data + kv->value.len;
+    if (ngx_strlcasestrn(kv->value.data, last, (u_char *)"CR=", 2)) ctx->ncr = 1;
+    break;
+  }
+  
+  return NGX_OK;
+}
+
+static ngx_int_t
 ngx_http_google_request_parse_redirect(ngx_http_request_t    * r,
                                        ngx_http_google_ctx_t * ctx)
 {
@@ -93,9 +109,9 @@ static ngx_int_t
 ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
                                       ngx_http_google_ctx_t * ctx)
 {
-  if (!ctx->cookies->nelts) {
-    ngx_str_set(ctx->uri, "/ncr");
-  } else if (ctx->uri->len == 12 && ctx->args) {
+  if (ngx_http_google_request_parse_cookie_pref(r, ctx)) return NGX_ERROR;
+  
+  if (ctx->uri->len == 12 && ctx->args) {
     
     u_char * refer = ctx->uri->data + 9;
     
@@ -156,6 +172,10 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
     }
   }
   
+  if (!ctx->ncr && ctx->uri->len == 1) {
+    ngx_str_set(ctx->uri, "/ncr");
+  }
+  
   ngx_str_set(ctx->pass, "scholar.google.com");
   
   return NGX_OK;
@@ -182,10 +202,20 @@ ngx_http_google_request_parse_main(ngx_http_request_t    * r,
                                    ngx_http_google_ctx_t * ctx)
 {
   ngx_str_set(ctx->pass, "www.google.com");
-  if (!ctx->cookies->nelts && !ctx->robots) {
+  
+  if (ngx_http_google_request_parse_cookie_gz  (r, ctx)) return NGX_ERROR;
+  if (ctx->robots) return NGX_OK;
+  if (ngx_http_google_request_parse_cookie_pref(r, ctx)) return NGX_ERROR;
+  
+  if (ctx->ncr) return NGX_OK;
+  
+  if ((ctx->uri->len == 1 && *ctx->uri->data == '/') ||
+      (ctx->uri->len == 6 &&
+       !ngx_strncasecmp(ctx->uri->data, (u_char *)"/webhp", 6)))
+  {
     ngx_str_set(ctx->uri, "/ncr");
   }
-  if (ngx_http_google_request_parse_cookie_gz(r, ctx)) return NGX_ERROR;
+  
   return NGX_OK;
 }
 
