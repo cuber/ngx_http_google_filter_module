@@ -40,9 +40,14 @@ ngx_http_google_filter_google_var(ngx_http_request_t        * r,
                                   uintptr_t data);
 
 static ngx_int_t
-ngx_http_google_filter_google_protocal_var(ngx_http_request_t        * r,
-                                           ngx_http_variable_value_t * v,
-                                           uintptr_t data);
+ngx_http_google_filter_google_host_var(ngx_http_request_t        * r,
+                                       ngx_http_variable_value_t * v,
+                                       uintptr_t data);
+
+static ngx_int_t
+ngx_http_google_filter_google_schema_var(ngx_http_request_t        * r,
+                                         ngx_http_variable_value_t * v,
+                                         uintptr_t data);
 
 static ngx_command_t
 ngx_http_google_filter_commands[] = {
@@ -123,8 +128,13 @@ static ngx_http_variable_t ngx_http_google_vars[] = {
     0,
     NGX_HTTP_VAR_CHANGEABLE | NGX_HTTP_VAR_NOCACHEABLE | NGX_HTTP_VAR_NOHASH,
     0 },
-  { ngx_string("google_protocal"),
-    NULL, ngx_http_google_filter_google_protocal_var,
+  { ngx_string("google_host"),
+    NULL, ngx_http_google_filter_google_host_var,
+    0,
+    NGX_HTTP_VAR_CHANGEABLE | NGX_HTTP_VAR_NOCACHEABLE | NGX_HTTP_VAR_NOHASH,
+    0 },
+  { ngx_string("google_schema"),
+    NULL, ngx_http_google_filter_google_schema_var,
     0,
     NGX_HTTP_VAR_CHANGEABLE | NGX_HTTP_VAR_NOCACHEABLE | NGX_HTTP_VAR_NOHASH,
     0 },
@@ -340,18 +350,31 @@ ngx_http_google_filter_google_var(ngx_http_request_t        * r,
 }
 
 static ngx_int_t
-ngx_http_google_filter_google_protocal_var(ngx_http_request_t        * r,
-                                           ngx_http_variable_value_t * v,
-                                           uintptr_t data)
+ngx_http_google_filter_google_host_var(ngx_http_request_t        * r,
+                                       ngx_http_variable_value_t * v,
+                                       uintptr_t data)
 {
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
   
-  v->len  = (ctx->ssl ? 8 : 7) + (unsigned)r->headers_in.server.len;
-  v->data = ngx_pcalloc(r->pool,  v->len);
+  v->len  = (unsigned)ctx->host->len;
+  v->data = ctx->host->data;
   
-  ngx_snprintf(v->data, v->len, "%s%V", ctx->ssl ? "https://" : "http://",
-               &r->headers_in.server);
+  return NGX_OK;
+}
+
+static ngx_int_t
+ngx_http_google_filter_google_schema_var(ngx_http_request_t        * r,
+                                         ngx_http_variable_value_t * v,
+                                         uintptr_t data)
+{
+  ngx_http_google_ctx_t * ctx;
+  ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
+  
+  v->len  = 5;
+  v->data = (u_char *)"https";
+  
+  if (!ctx->ssl) v->len--;
   
   return NGX_OK;
 }

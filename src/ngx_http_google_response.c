@@ -183,10 +183,9 @@ ngx_http_google_response_header_set_cookie(ngx_http_request_t    * r,
       }
     }
     
-    if (!ngx_strncasecmp(kv->key.data, (u_char *)"domain", 6)) {
-      kv->value.len  = 1 + ctx->host->len;
-      kv->value.data = ngx_pcalloc(r->pool, kv->value.len);
-      ngx_snprintf(kv->value.data, kv->value.len, ".%V", ctx->host);
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"domain", 6))
+    {
+      kv->value = *ctx->domain;
     }
     
     if (!ngx_strncasecmp(kv->key.data, (u_char *)"path", 4)) {

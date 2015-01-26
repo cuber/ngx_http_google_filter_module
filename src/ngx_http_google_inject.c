@@ -112,13 +112,13 @@ ngx_http_google_inject_subs_domain(ngx_conf_t * cf)
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 2,
                                          sns_ssl,
-                                         "$google_protocal"))
+                                         "$google_schema://$google_host"))
       return NGX_CONF_ERROR;
     
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 2,
                                          sns_htp,
-                                         "$google_protocal"))
+                                         "$google_schema://$google_host"))
       return NGX_CONF_ERROR;
   }
   
@@ -155,35 +155,35 @@ ngx_http_google_inject_subs(ngx_conf_t * cf)
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 3,
                                          "([0-9A-Za-z.-]+\\.gstatic\\.com)",
-                                         "$host/!$1",
+                                         "$google_host/!$1",
                                          "igr"))
       break;
     
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 3,
                                          "((apis)\\.google\\.com)",
-                                         "$host/!$1",
+                                         "$google_host/!$1",
                                          "igr"))
       break;
     
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 3,
                                          "((www)|(images))\\.google\\.[0-9a-z.]+",
-                                         "$host",
+                                         "$google_host",
                                          "igr"))
       break;
     
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 3,
                                          "scholar\\.google\\.[0-9a-z.]+\\\\?/scholar",
-                                         "$host/scholar",
+                                         "$google_host/scholar",
                                          "igr"))
       break;
     
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 3,
                                          "scholar\\.google\\.[0-9a-z.]+",
-                                         "$host/scholar",
+                                         "$google_host/scholar",
                                          "igr"))
       break;
     

@@ -25,11 +25,31 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
   if (!ctx->pass) return NULL;
   ctx->arg  = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
   if (!ctx->arg)  return NULL;
+  ctx->domain = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+  if (!ctx->domain) return NULL;
   
   ctx->uri  = &r->unparsed_uri;
   ctx->host = &r->headers_in.host->value;
   ctx->lang = &glcf->language;
   ctx->type = ngx_http_google_type_main;
+  
+  ngx_str_t domain = *ctx->host;
+  
+  u_char * last = domain.data + domain.len, * find;
+  if ((find = ngx_strlchr(domain.data, last, ':'))) {
+    domain.len = find - domain.data;
+  }
+  
+  ctx->domain->len  = domain.len + 1;
+  ctx->domain->data = ngx_pcalloc(r->pool, ctx->domain->len);
+  if (!ctx->domain->data) return NULL;
+  
+  ngx_snprintf(ctx->domain->data, ctx->domain->len, ".%V", &domain);
+  
+  if (ngx_inet_addr(domain.data, domain.len) != INADDR_NONE) {
+    ctx->domain->data++;
+    ctx->domain->len --;
+  }
   
   // default language
   if (!ctx->lang->len) {
@@ -156,16 +176,30 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
     
     if (!ngx_strncasecmp(ctx->uri->data, (u_char *)"/scholar", 8))
     {
-      ngx_uint_t i, q = 0;
+      ngx_uint_t i, strip = 1;
       ngx_keyval_t * kv, * hd = ctx->args->elts;
       
       for (i = 0; i < ctx->args->nelts; i++) {
         kv = hd + i;
-        if (!kv->key.len || *kv->key.data != 'q') continue;
-        q = 1; break;
+        if (!kv->key.len) continue;
+        if (kv->key.len == 1 && *kv->key.data == 'q')
+        {
+          strip = 0; break;
+        }
+        if (kv->key.len == 5 && !ngx_strncasecmp(kv->key.data,
+                                                (u_char *)"cites", 5))
+        {
+          strip = 0; break;
+        }
+        if (kv->key.len == 7 && !ngx_strncasecmp(kv->key.data,
+                                                (u_char *)"cluster", 7))
+        {
+          strip = 0; break;
+        }
+        
       }
       
-      if (!q) {
+      if (strip) {
         ctx->uri->data += 8;
         ctx->uri->len  -= 8;
       }

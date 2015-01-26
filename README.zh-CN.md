@@ -260,7 +260,7 @@ location / {
 ```nginx
 location / {
   google on;
-  google_scholar "scholar.google.co.jp";
+  google_scholar on;
   # 设置成德文
   google_language "de"; 
 }
@@ -268,8 +268,46 @@ location / {
 
 支持的语言如下.
 ```txt
-de en es es-419 fr hr it nl pl pt-BR pt-PT 
-vi tr ru ar th ko zh-CN zh-TW ja
+ar    -> 阿拉伯
+bg    -> 保加利亚
+ca    -> 加泰罗尼亚
+zh-CN -> 中国 (简体)
+zh-TW -> 中国 (繁体)
+hr    -> 克罗地亚
+cs    -> 捷克
+da    -> 丹麦
+nl    -> 荷兰
+en    -> 英语
+tl    -> 菲律宾
+fi    -> 芬兰
+fr    -> 法国
+de    -> 德国
+el    -> 希腊
+iw    -> 希伯来
+hi    -> 印地文
+hu    -> 匈牙利
+id    -> 印度尼西亚
+it    -> 意大利
+ja    -> 日本
+ko    -> 朝鲜
+lv    -> 拉脱维亚
+lt    -> 立陶宛
+no    -> 挪威
+fa    -> 波斯
+pl    -> 波兰
+pt-BR -> 葡萄牙 (巴西)
+pt-PT -> 葡萄牙 (葡萄牙)
+ro    -> 罗马尼亚
+ru    -> 俄罗斯
+sr    -> 塞尔维亚
+sk    -> 斯洛伐克
+sl    -> 斯洛文尼亚
+es    -> 西班牙
+sv    -> 瑞典
+th    -> 泰国
+tr    -> 土耳其
+uk    -> 乌克兰
+vi    -> 越南
 ```
 
 ##### 搜索引擎爬虫许可 #####

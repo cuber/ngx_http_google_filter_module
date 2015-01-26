@@ -120,16 +120,54 @@ The default language can be set throuth `google_language`, if it is not setup, `
 ```nginx
 location / {
   google on;
-  google_scholar "scholar.google.co.jp";
+  google_scholar on;
   # set language to German
-  google_language "de"; 
+  google_language de; 
 }
 ```
 
 Supported languages are listed below.
 ```txt
-de en es es-419 fr hr it nl pl pt-BR pt-PT 
-vi tr ru ar th ko zh-CN zh-TW ja
+ar    -> Arabic
+bg    -> Bulgarian
+ca    -> Catalan
+zh-CN -> Chinese (Simplified)
+zh-TW -> Chinese (Traditional)
+hr    -> Croatian
+cs    -> Czech
+da    -> Danish
+nl    -> Dutch
+en    -> English
+tl    -> Filipino
+fi    -> Finnish
+fr    -> French
+de    -> German
+el    -> Greek
+iw    -> Hebrew
+hi    -> Hindi
+hu    -> Hungarian
+id    -> Indonesian
+it    -> Italian
+ja    -> Japanese
+ko    -> Korean
+lv    -> Latvian
+lt    -> Lithuanian
+no    -> Norwegian
+fa    -> Persian
+pl    -> Polish
+pt-BR -> Portuguese (Brazil)
+pt-PT -> Portuguese (Portugal)
+ro    -> Romanian
+ru    -> Russian
+sr    -> Serbian
+sk    -> Slovak
+sl    -> Slovenian
+es    -> Spanish
+sv    -> Swedish
+th    -> Thai
+tr    -> Turkish
+uk    -> Ukrainian
+vi    -> Vietnamese
 ```
 
 ##### Spider Allowance #####
