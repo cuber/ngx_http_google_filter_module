@@ -17,7 +17,7 @@ location / {
 ```
 > _你没有看错, “一行配置, google 我有！”_   
   
-#### 现在 [wen.lu](https://wen.lu) 就是由该扩展驱动 ####
+#### 现在 [g.wen.lu](https://g.wen.lu) 就是由该扩展驱动 ####
 ![Demo Site](http://ww4.sinaimg.cn/large/68bd1777jw1enbhxn39z8j212q0lu0uo.jpg)
   
 #### 依赖库 ####

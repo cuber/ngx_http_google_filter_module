@@ -16,7 +16,7 @@ location / {
 > _What? Are you kidding me?_   
 > _Yes, it's just that simple!_
   
-#### Demo site [https://wen.lu](https://wen.lu) ####
+#### Demo site [https://g.wen.lu](https://g.wen.lu) ####
 ![Demo Site](http://ww4.sinaimg.cn/large/68bd1777jw1enbhxn39z8j212q0lu0uo.jpg)
   
 #### Dependency ####
