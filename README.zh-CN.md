@@ -34,7 +34,7 @@ location / {
 #
 # 安装 gcc & git
 #
-apt-get install build-essential git
+apt-get install build-essential git gcc g++
 
 #
 # 下载最新版源码
@@ -96,7 +96,7 @@ cd nginx-1.7.8
   --with-pcre=../pcre-8.36 \
   --with-openssl=../openssl-1.0.1j \
   --with-zlib=../zlib-1.2.8 \
-  --add-module=../ngx_http_google_filter_module
+  --add-module=../ngx_http_google_filter_module \
   --add-module=../ngx_http_substitutions_filter_module
   
 #
