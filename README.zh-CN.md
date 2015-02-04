@@ -34,7 +34,7 @@ location / {
 #
 # 安装 gcc & git
 #
-apt-get install build-essential git gcc g++
+apt-get install build-essential git gcc g++ make
 
 #
 # 下载最新版源码
@@ -104,12 +104,13 @@ cd nginx-1.7.8
 # 如果扩展有报错, 请发 issue 到
 # https://github.com/cuber/ngx_http_google_filter_module/issues
 #
-make; make install
+make
+sudo make install
 
 #
 # 启动
 #
-/opt/nginx-1.7.8/sbin/nginx
+sudo /opt/nginx-1.7.8/sbin/nginx
 ```
 
 ##### 从发行版迁移 #####
