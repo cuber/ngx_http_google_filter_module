@@ -18,7 +18,7 @@ location / {
 > _你没有看错, “一行配置, google 我有！”_   
   
 #### 现在 [g.wen.lu](https://g.wen.lu) 就是由该扩展驱动 ####
-![Demo Site](http://ww4.sinaimg.cn/large/68bd1777jw1enbhxn39z8j212q0lu0uo.jpg)
+![Demo Site](http://ww2.sinaimg.cn/large/68bd1777gw1eoyba9li7tj212i0lywg8.jpg)
   
 #### 依赖库 ####
   1. [`pcre`](http://www.pcre.org/) *正则*
@@ -96,6 +96,7 @@ cd nginx-1.7.8
   --with-pcre=../pcre-8.36 \
   --with-openssl=../openssl-1.0.1j \
   --with-zlib=../zlib-1.2.8 \
+  --with-http_ssl_module \
   --add-module=../ngx_http_google_filter_module \
   --add-module=../ngx_http_substitutions_filter_module
   
@@ -186,6 +187,9 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 #
 apt-get install libpcre3-dev libssl-dev zlib1g-dev libxslt1-dev libgd-dev libgeoip-dev
 
+#
+# 请对照自己发行版的 configure 参数进行 configure, 勿直接 copy 以下配置
+#
 ./configure \
   --with-cc-opt='-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2' \
   --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' \
@@ -231,9 +235,38 @@ service nginx stop
 service nginx start
 ```
 
-#### 配置方法 ####
+#### 基本配置方法 ####
+`http`配置方式
+```nginx
+server {
+  server_name <你的域名>;
+  listen 80;
+
+  resolver 8.8.8.8;
+  location {
+    google on;
+  }
+}
+```
+`https`配置方式
+```nginx
+server {
+  server_name <你的域名>;
+  listen 443;
+
+  ssl on;
+  ssl_certificate <你的证书>
+  ssl_certificate_key <你的私钥>
+
+  resolver 8.8.8.8;
+  location {
+    google on;
+  }
+}
+```
+#### 进阶配置方法 ####
 ##### 基本搜索 #####
-  需要配置 `resolver` 用于域名解析
+需要配置 `resolver` 用于域名解析
 ```nginx
 server {
   # ... 仅列举部分配置
@@ -380,7 +413,7 @@ server {
 ```
 
 #### Copyright & License ####
-  所有代码都遵循 [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt) 开源协议   
+  所有代码都遵循与 [Nginx](http://nginx.org/LICENSE) 相同的开源协议   
   Copyright (C) 2014 by Cube.
 
 

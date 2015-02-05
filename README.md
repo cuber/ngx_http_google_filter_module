@@ -17,7 +17,7 @@ location / {
 > _Yes, it's just that simple!_
   
 #### Demo site [https://g.wen.lu](https://g.wen.lu) ####
-![Demo Site](http://ww4.sinaimg.cn/large/68bd1777jw1enbhxn39z8j212q0lu0uo.jpg)
+![Demo Site](http://ww2.sinaimg.cn/large/68bd1777gw1eoyba9li7tj212i0lywg8.jpg)
   
 #### Dependency ####
   1. [`pcre`](http://www.pcre.org/) *regular expression support*
@@ -241,7 +241,7 @@ server {
 
 
 #### Copyright & License ####
-  All codes are under [GPLv2](http://www.gnu.org/licenses/gpl-2.0.txt)    
+  All codes are under the same [LICENCE](http://nginx.org/LICENSE) with [Nginx](http://nginx.org)
   Copyright (C) 2014 by Cube.
 
 
