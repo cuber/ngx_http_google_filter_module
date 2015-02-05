@@ -241,7 +241,7 @@ server {
 
 
 #### Copyright & License ####
-  All codes are under the same [LICENCE](http://nginx.org/LICENSE) with [Nginx](http://nginx.org)
+  All codes are under the same [LICENCE](http://nginx.org/LICENSE) with [Nginx](http://nginx.org)    
   Copyright (C) 2014 by Cube.
 
 
