@@ -62,7 +62,7 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
 #if (NGX_HTTP_SSL)
   ngx_http_ssl_srv_conf_t * sscf;
   sscf = ngx_http_get_module_srv_conf(r, ngx_http_ssl_module);
-  if (sscf->enable == 1) ctx->ssl = 1;
+  if (sscf->enable || r->http_connection->addr_conf->ssl) ctx->ssl = 1;
 #endif
   
   return ctx;
