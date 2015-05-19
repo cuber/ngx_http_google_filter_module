@@ -113,7 +113,7 @@ ngx_http_google_response_header_set_cookie_exempt(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
-ngx_http_google_response_header_set_cookie_pref(ngx_http_request_t    * r,
+ngx_http_google_response_header_set_cookie_conf(ngx_http_request_t    * r,
                                                 ngx_http_google_ctx_t * ctx,
                                                 ngx_str_t             * v)
 {
@@ -169,9 +169,10 @@ ngx_http_google_response_header_set_cookie(ngx_http_request_t    * r,
   for (i = 0; i < kvs->nelts; i++)
   {
     kv = hd + i;
-    if (!ngx_strncasecmp(kv->key.data, (u_char *)"PREF", 4))
+    
+    if (!ngx_strncasecmp(kv->key.data, ctx->conf->data, ctx->conf->len))
     {
-      if (ngx_http_google_response_header_set_cookie_pref(r, ctx, &kv->value)) {
+      if (ngx_http_google_response_header_set_cookie_conf(r, ctx, &kv->value)) {
         return NGX_ERROR;
       }
     }

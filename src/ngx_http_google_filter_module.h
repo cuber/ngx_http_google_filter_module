@@ -36,7 +36,7 @@ typedef struct {
 
 typedef struct {
   ngx_int_t     ssl, ncr, robots;
-  ngx_str_t   * domain, * host, * pass, * lang, * uri, * arg;
+  ngx_str_t   * domain, * host, * pass, * lang, * conf, * uri, * arg;
   ngx_array_t * args, * cookies; /* array of ngx_keyval_t */
   ngx_http_google_type_t type;
 } ngx_http_google_ctx_t;
