@@ -69,8 +69,21 @@ ngx_http_google_response_header_location(ngx_http_request_t    * r,
       ngx_snprintf(nuri.data, nuri.len, "/scholar%V", &uri);
       uri = nuri;
     }
+  } else if (glcf->books == 1 &&
+             !ngx_strncasecmp(host.data, (u_char *)"books", 5))
+  {
+    if (uri.len &&
+        ngx_strncasecmp(uri.data, (u_char *)"/books", 6))
+    {
+      ngx_str_t nuri;
+      nuri.len  = uri.len + 6;
+      nuri.data = ngx_pcalloc(r->pool, nuri.len);
+      if (!nuri.data) return NGX_ERROR;
+      ngx_snprintf(nuri.data, nuri.len, "/books%V", &uri);
+      uri = nuri;
+    }
   }
-  
+
   ngx_str_t nv;
   nv.len  = 8 + ctx->host->len + uri.len;
   nv.data = ngx_pcalloc(r->pool, nv.len);
@@ -118,7 +131,8 @@ ngx_http_google_response_header_set_cookie_pref(ngx_http_request_t    * r,
                                                 ngx_str_t             * v)
 {
   if (ctx->type != ngx_http_google_type_main &&
-      ctx->type != ngx_http_google_type_scholar) return NGX_OK;
+      ctx->type != ngx_http_google_type_scholar &&
+      ctx->type != ngx_http_google_type_books ) return NGX_OK;
   if (ctx->ncr)                                  return NGX_OK;
   
   ngx_uint_t i;
