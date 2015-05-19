@@ -228,6 +228,79 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
+ngx_http_google_request_parse_books(ngx_http_request_t    * r,
+                                      ngx_http_google_ctx_t * ctx)
+{
+  if (ngx_http_google_request_parse_cookie_pref(r, ctx)) return NGX_ERROR;
+
+  if (ctx->uri->len == 10 && ctx->args) {
+
+    u_char * refer = ctx->uri->data + 9;
+
+    if (!ngx_strncmp(refer, "bib", 3) ||
+        !ngx_strncmp(refer, "enw", 3) ||
+        !ngx_strncmp(refer, "ris", 3) ||
+        !ngx_strncmp(refer, "rfw", 3))
+    {
+      ngx_uint_t i;
+      ngx_keyval_t * kv, * hd = ctx->args->elts;
+
+      for (i = 0; i < ctx->args->nelts; i++)
+      {
+        kv = hd + i;
+        if (!kv->key.len || *kv->key.data != 'q') continue;
+
+        u_char * last = kv->value.data + kv->value.len;
+        u_char * find = ngx_strlcasestrn(kv->value.data, last,
+                                         ctx->host->data, ctx->host->len - 1);
+
+        if (!find) break;
+        kv->value.len = find - kv->value.data;
+
+        ngx_str_t nval;
+        nval.len  = kv->value.len + sizeof("books.google.com");
+        nval.data = ngx_pcalloc(r->pool, nval.len);
+
+        if (!nval.data) return NGX_ERROR;
+        ngx_snprintf(nval.data, nval.len, "%Vbooks.google.com/", &kv->value);
+        kv->value = nval;
+
+        break;
+      } // end of for args
+    } // end of if refer
+  } else {
+
+    if (!ngx_strncasecmp(ctx->uri->data, (u_char *)"/books", 6))
+    {
+      ngx_uint_t i, strip = 1;
+      ngx_keyval_t * kv, * hd = ctx->args->elts;
+
+      for (i = 0; i < ctx->args->nelts; i++) {
+        kv = hd + i;
+        if (!kv->key.len) continue;
+        if (kv->key.len == 1 && *kv->key.data == 'q')
+        {
+          strip = 0; break;
+        }
+      }
+
+      if (strip) {
+        ctx->uri->data += 6;
+        ctx->uri->len  -= 6;
+      }
+    }
+  }
+
+  if (!ctx->ncr && ctx->uri->len == 1) {
+    ngx_str_set(ctx->uri, "/ncr");
+  }
+
+  ngx_str_set(ctx->pass, "books.google.com");
+
+  return NGX_OK;
+}
+
+static ngx_int_t
 ngx_http_google_request_parse_verify(ngx_http_request_t    * r,
                                      ngx_http_google_ctx_t * ctx)
 {
@@ -291,6 +364,15 @@ ngx_http_google_request_parse_host(ngx_http_request_t    * r,
     if (ngx_http_google_request_parse_scholar(r, ctx)) return NGX_ERROR;
   }
   
+  // books
+  if (glcf->books == 1 &&
+      ctx->uri->len > 5   &&
+      (!ngx_strncasecmp(ctx->uri->data, (u_char *)"/books", 6)))
+  {
+    ctx->type = ngx_http_google_type_books;
+    if (ngx_http_google_request_parse_books(r, ctx)) return NGX_ERROR;
+  }
+
   // verify
   if (ctx->uri->len > 4 &&
       (!ngx_strncasecmp(ctx->uri->data, (u_char *)"/ipv4", 5) ||

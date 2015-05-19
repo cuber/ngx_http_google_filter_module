@@ -68,6 +68,14 @@ ngx_http_google_filter_commands[] = {
     NULL
   },
   {
+    ngx_string("google_books"),
+    NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+    ngx_conf_set_flag_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_google_loc_conf_t, books),
+    NULL
+  },
+  {
     ngx_string("google_language"),
     NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
     ngx_http_google_filter_language,
@@ -244,6 +252,7 @@ ngx_http_google_filter_create_loc_conf(ngx_conf_t * cf)
   
   conf->robots  = NGX_CONF_UNSET;
   conf->enable  = NGX_CONF_UNSET;
+  conf->books = NGX_CONF_UNSET;
   conf->scholar = NGX_CONF_UNSET;
   conf->ssloff  = NGX_CONF_UNSET_PTR;
   
@@ -259,6 +268,7 @@ ngx_http_google_filter_merge_loc_conf(ngx_conf_t * cf, void * parent,
   
   ngx_conf_merge_value    (conf->robots,   prev->robots,   NGX_CONF_UNSET);
   ngx_conf_merge_value    (conf->enable,   prev->enable,   NGX_CONF_UNSET);
+  ngx_conf_merge_value    (conf->books,  prev->books,  NGX_CONF_UNSET);
   ngx_conf_merge_value    (conf->scholar,  prev->scholar,  NGX_CONF_UNSET);
   ngx_conf_merge_ptr_value(conf->ssloff,   prev->ssloff,   NGX_CONF_UNSET_PTR);
   ngx_conf_merge_str_value(conf->language, prev->language, "zh-CN");
