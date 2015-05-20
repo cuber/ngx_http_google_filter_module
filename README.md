@@ -107,7 +107,6 @@ server {
 ##### Google Scholar #####
 `google_scholar` depends on `google`, so `google_scholar` cannot be used independently.    
 Nowadays google scholar has migrate from `http` to `https`, and `ncr` is supported, so the `tld` of google scholar is no more needed.     
-Configuration nginx.
 ``` nginx
 location / {
   google on;
