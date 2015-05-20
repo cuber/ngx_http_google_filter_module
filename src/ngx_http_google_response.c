@@ -72,7 +72,7 @@ ngx_http_google_response_header_location(ngx_http_request_t    * r,
   }
   
   ngx_str_t nv;
-  nv.len  = 8 + ctx->host->len + uri.len;
+  nv.len  = (ctx->ssl ? 8 : 7) + ctx->host->len + uri.len;
   nv.data = ngx_pcalloc(r->pool, nv.len);
   
   if (!nv.data) return NGX_ERROR;
@@ -113,6 +113,15 @@ ngx_http_google_response_header_set_cookie_exempt(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
+ngx_http_google_response_header_sort_cookie_conf(const void * a, const void * b)
+{
+  const ngx_keyval_t * kva = a, * kvb = b;
+  if (kva->key.len < kvb->key.len) return  1;
+  if (kva->key.len > kvb->key.len) return -1;
+  return 0;
+}
+
+static ngx_int_t
 ngx_http_google_response_header_set_cookie_conf(ngx_http_request_t    * r,
                                                 ngx_http_google_ctx_t * ctx,
                                                 ngx_str_t             * v)
@@ -147,6 +156,10 @@ ngx_http_google_response_header_set_cookie_conf(ngx_http_request_t    * r,
     ngx_str_set(&kv->value, "1");
   }
 
+  // sort with length
+  ngx_sort(kvs->elts, kvs->nelts, sizeof(ngx_keyval_t),
+           ngx_http_google_response_header_sort_cookie_conf);
+  
   ngx_str_t * nv = ngx_http_google_implode_kv(r, kvs, ":");
   if (!nv) return NGX_ERROR;
   
