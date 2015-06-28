@@ -90,9 +90,6 @@ ngx_http_google_explode_kv(ngx_http_request_t * r,
   if (!dup) return NULL;
   memcpy(dup, v->data, v->len);
   
-  if (!dup) return NULL;
-  memcpy(dup, v->data, v->len);
-  
   char * pch, * sep, * brkt;
   pch = strtok_r(dup, de, &brkt);
   

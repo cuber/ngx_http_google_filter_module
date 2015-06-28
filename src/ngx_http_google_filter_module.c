@@ -318,6 +318,11 @@ ngx_http_google_filter_google_var(ngx_http_request_t        * r,
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
   
+  if (ctx == NULL) {
+    v->not_found = 1;
+    return NGX_OK;
+  }
+  
   ngx_http_google_loc_conf_t * glcf;
   glcf = ngx_http_get_module_loc_conf(r, ngx_http_google_filter_module);
   
@@ -357,6 +362,11 @@ ngx_http_google_filter_google_host_var(ngx_http_request_t        * r,
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
   
+  if (ctx == NULL) {
+    v->not_found = 1;
+    return NGX_OK;
+  }
+  
   v->len  = (unsigned)ctx->host->len;
   v->data = ctx->host->data;
   
@@ -370,6 +380,11 @@ ngx_http_google_filter_google_schema_var(ngx_http_request_t        * r,
 {
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_http_get_module_ctx(r, ngx_http_google_filter_module);
+  
+  if (ctx == NULL) {
+    v->not_found = 1;
+    return NGX_OK;
+  }
   
   v->len  = 5;
   v->data = (u_char *)"https";

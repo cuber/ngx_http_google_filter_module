@@ -243,7 +243,7 @@ server {
   listen 80;
 
   resolver 8.8.8.8;
-  location {
+  location / {
     google on;
   }
 }
@@ -255,11 +255,11 @@ server {
   listen 443;
 
   ssl on;
-  ssl_certificate <你的证书>
-  ssl_certificate_key <你的私钥>
+  ssl_certificate <你的证书>;
+  ssl_certificate_key <你的私钥>;
 
   resolver 8.8.8.8;
-  location {
+  location / {
     google on;
   }
 }

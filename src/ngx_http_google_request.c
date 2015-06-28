@@ -18,15 +18,20 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
   ngx_http_google_ctx_t * ctx;
   ctx = ngx_pcalloc(r->pool, sizeof(ngx_http_google_ctx_t));
   
-  if (!ctx)       return NULL;
-  ctx->host = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
-  if (!ctx->host) return NULL;
-  ctx->pass = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
-  if (!ctx->pass) return NULL;
-  ctx->arg  = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
-  if (!ctx->arg)  return NULL;
+  if (!ctx)         return NULL;
+  ctx->host   = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+  if (!ctx->host)   return NULL;
+  ctx->conf   = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+  if (!ctx->conf)   return NULL;
+  ctx->pass   = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+  if (!ctx->pass)   return NULL;
+  ctx->arg    = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+  if (!ctx->arg)    return NULL;
   ctx->domain = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
   if (!ctx->domain) return NULL;
+  
+  // default conf key
+  ngx_str_set(ctx->conf, "PREF");
   
   ctx->uri  = &r->unparsed_uri;
   ctx->host = &r->headers_in.host->value;
@@ -62,7 +67,7 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
 #if (NGX_HTTP_SSL)
   ngx_http_ssl_srv_conf_t * sscf;
   sscf = ngx_http_get_module_srv_conf(r, ngx_http_ssl_module);
-  if (sscf->enable == 1) ctx->ssl = 1;
+  if (sscf->enable || r->http_connection->addr_conf->ssl) ctx->ssl = 1;
 #endif
   
   return ctx;
@@ -86,15 +91,17 @@ ngx_http_google_request_parse_cookie_gz(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
-ngx_http_google_request_parse_cookie_pref(ngx_http_request_t    * r,
+ngx_http_google_request_parse_cookie_conf(ngx_http_request_t    * r,
                                           ngx_http_google_ctx_t * ctx)
 {
   ngx_uint_t i;
   ngx_keyval_t * kv, * hd = ctx->cookies->elts;
   
-  for (i = 0; i < ctx->cookies->nelts; i++) {
+  for (i = 0; i < ctx->cookies->nelts; i++)
+  {
     kv = hd + i;
-    if (ngx_strncasecmp(kv->key.data, (u_char *)"PREF", 2)) continue;
+    if (ngx_strncasecmp(kv->key.data, ctx->conf->data, ctx->conf->len)) continue;
+    // find cr
     u_char * last = kv->value.data + kv->value.len;
     if (ngx_strlcasestrn(kv->value.data, last, (u_char *)"CR=", 2)) ctx->ncr = 1;
     break;
@@ -129,7 +136,7 @@ static ngx_int_t
 ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
                                       ngx_http_google_ctx_t * ctx)
 {
-  if (ngx_http_google_request_parse_cookie_pref(r, ctx)) return NGX_ERROR;
+  if (ngx_http_google_request_parse_cookie_conf(r, ctx)) return NGX_ERROR;
   
   if (ctx->uri->len == 12 && ctx->args) {
     
@@ -199,6 +206,11 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
         
       }
       
+      if (ctx->uri->len > 8) switch (ctx->uri->data[8]) {
+        case '?': case '/': break;
+        default: strip = 0; break;
+      }
+      
       if (strip) {
         ctx->uri->data += 8;
         ctx->uri->len  -= 8;
@@ -239,7 +251,7 @@ ngx_http_google_request_parse_main(ngx_http_request_t    * r,
   
   if (ngx_http_google_request_parse_cookie_gz  (r, ctx)) return NGX_ERROR;
   if (ctx->robots) return NGX_OK;
-  if (ngx_http_google_request_parse_cookie_pref(r, ctx)) return NGX_ERROR;
+  if (ngx_http_google_request_parse_cookie_conf(r, ctx)) return NGX_ERROR;
   
   if (ctx->ncr) return NGX_OK;
   
@@ -274,6 +286,8 @@ ngx_http_google_request_parse_host(ngx_http_request_t    * r,
        !ngx_strncasecmp(ctx->uri->data, (u_char *)"/schhp",   6)))
   {
     ctx->type = ngx_http_google_type_scholar;
+    // conf key change
+    ngx_str_set(ctx->conf, "GSP");
     if (ngx_http_google_request_parse_scholar(r, ctx)) return NGX_ERROR;
   }
   
