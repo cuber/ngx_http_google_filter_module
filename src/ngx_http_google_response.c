@@ -269,8 +269,14 @@ ngx_http_google_response_header_filter(ngx_http_request_t * r)
   
   // add server header
   ngx_str_set(&tb->key, "Server");
-  tb->value = *ctx->host;
-  tb->hash  = 1;
+  tb->hash       = 1;
+  tb->value.len  = ctx->host->len;
+  tb->value.len += sizeof(NGX_HTTP_GOOGLE_FILTER_MODULE_VERSION);
+  tb->value.data = ngx_pcalloc(r->pool, tb->value.len);
+  // host / version
+  ngx_snprintf(tb->value.data, tb->value.len,
+               "%V/" NGX_HTTP_GOOGLE_FILTER_MODULE_VERSION,
+               ctx->host);
   
   // replace with new headers
   r->headers_out.server = tb;
