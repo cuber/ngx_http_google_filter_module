@@ -91,7 +91,7 @@ ngx_http_google_inject_subs_domain(ngx_conf_t * cf)
   if (ngx_http_google_inject_subs_args(cf,
                                        "subs_filter", 2,
                                        "$google_schema_reverse://$google_host",
-                                       "$google_schema://"      "$google_host"))
+                                       "$google_schema"      "://$google_host"))
     return NGX_CONF_ERROR;
   else
     return NGX_CONF_OK;
