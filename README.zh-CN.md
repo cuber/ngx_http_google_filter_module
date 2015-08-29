@@ -395,7 +395,7 @@ server {
 }
 
 upstream www.google.com {
-  server < vps(hk) 的 ip >:80;
+  server < vps(us) 的 ip >:80;
 }
 
 #
