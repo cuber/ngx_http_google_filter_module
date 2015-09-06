@@ -109,9 +109,14 @@ make
 sudo make install
 
 #
-# 启动
+# 启动, 安装过程到此结束
 #
 sudo /opt/nginx-1.7.8/sbin/nginx
+
+#
+# 配置修改后, 需要 reload nginx 来让配置生效, 
+#
+sudo /opt/nginx-1.7.8/sbin/nginx -s reload
 ```
 
 ##### 从发行版迁移 #####
@@ -119,7 +124,7 @@ sudo /opt/nginx-1.7.8/sbin/nginx
 #
 # 安装 gcc & git
 #
-apt-get install build-essential git
+apt-get install build-essential git gcc g++ make
 
 #
 # 安装发行版
@@ -229,10 +234,15 @@ apt-get install libpcre3-dev libssl-dev zlib1g-dev libxslt1-dev libgd-dev libgeo
 cp -rf objs/nginx /usr/sbin/nginx
 
 #
-# 重启 nginx
+# 重启 nginx 至此, 迁移工作结束
 # 
 service nginx stop
 service nginx start
+
+#
+# 配置修改后, 需要 restart nginx 来让配置生效
+#
+service nginx restart
 ```
 
 #### 基本配置方法 ####
