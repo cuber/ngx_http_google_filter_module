@@ -1,6 +1,8 @@
 Nginx Module for Google
 =======================
 
+[![Join the chat at https://gitter.im/cuber/ngx_http_google_filter_module](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cuber/ngx_http_google_filter_module?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/cuber/ngx_http_google_filter_module.svg?branch=dev)](https://travis-ci.org/cuber/ngx_http_google_filter_module)
 
 #### Description ####
