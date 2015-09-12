@@ -2,6 +2,7 @@ Nginx Module for Google
 =======================
 
 [![Build Status](https://travis-ci.org/cuber/ngx_http_google_filter_module.svg?branch=dev)](https://travis-ci.org/cuber/ngx_http_google_filter_module)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cuber/ngx_http_google_filter_module?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 #### Description ####
 `ngx_http_google_filter_module` is a filter module which makes google mirror much easier to deploy.    
