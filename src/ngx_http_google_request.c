@@ -138,7 +138,7 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
 {
   if (ngx_http_google_request_parse_cookie_conf(r, ctx)) return NGX_ERROR;
   
-  if (ctx->uri->len == 12 && ctx->args) {
+  if (ctx->uri->len == 12 && ctx->args && ctx->args->nelts) {
     
     u_char * refer = ctx->uri->data + 9;
     
@@ -183,10 +183,18 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
     
     if (!ngx_strncasecmp(ctx->uri->data, (u_char *)"/scholar", 8))
     {
+      ngx_str_t uri = *ctx->uri;
+      
+      // strip "/scholar" uri
+      uri.data += 8;
+      uri.len  -= 8;
+      
       ngx_uint_t i, strip = 1;
       ngx_keyval_t * kv, * hd = ctx->args->elts;
       
-      for (i = 0; i < ctx->args->nelts; i++) {
+      // traverse args
+      for (i = 0; i < ctx->args->nelts; i++)
+      {
         kv = hd + i;
         if (!kv->key.len) continue;
         if (kv->key.len == 1 && *kv->key.data == 'q')
@@ -206,15 +214,12 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
         
       }
       
-      if (ctx->uri->len > 8) switch (ctx->uri->data[8]) {
+      if (uri.len) switch (*uri.data) {
         case '?': case '/': break;
         default: strip = 0; break;
       }
       
-      if (strip) {
-        ctx->uri->data += 8;
-        ctx->uri->len  -= 8;
-      }
+      if (strip) *ctx->uri = uri;
     }
   }
   

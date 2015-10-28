@@ -15,6 +15,8 @@
 
 #include <assert.h>
 
+#define NGX_HTTP_GOOGLE_FILTER_MODULE_VERSION "0.1.9"
+
 typedef enum {
   ngx_http_google_type_main = 0,
   ngx_http_google_type_verify,

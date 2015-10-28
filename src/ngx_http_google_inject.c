@@ -88,41 +88,13 @@ ngx_http_google_inject_subs_args(ngx_conf_t * cf,
 static char *
 ngx_http_google_inject_subs_domain(ngx_conf_t * cf)
 {
-  ngx_http_core_srv_conf_t * cscf;
-  cscf = ngx_http_conf_get_module_srv_conf(cf, ngx_http_core_module);
-  
-  ngx_uint_t i, len = 512;
-  char * sns_htp, * sns_ssl;
-  
-  ngx_http_server_name_t * sns = cscf->server_names.elts, * sn;
-  for (i = 0; i < cscf->server_names.nelts; i++)
-  {
-    sn = sns + i;
-    if (!sn->name.len) continue;
-    
-    sns_htp = ngx_pcalloc(cf->pool, len + 1);
-    if (!sns_htp) return NGX_CONF_ERROR;
-    
-    sns_ssl = ngx_pcalloc(cf->pool, len + 1);
-    if (!sns_ssl) return NGX_CONF_ERROR;
-    
-    ngx_snprintf((u_char *)sns_htp, len, "http://%V",  &sn->name);
-    ngx_snprintf((u_char *)sns_ssl, len, "https://%V", &sn->name);
-    
-    if (ngx_http_google_inject_subs_args(cf,
-                                         "subs_filter", 2,
-                                         sns_ssl,
-                                         "$google_schema://$google_host"))
-      return NGX_CONF_ERROR;
-    
-    if (ngx_http_google_inject_subs_args(cf,
-                                         "subs_filter", 2,
-                                         sns_htp,
-                                         "$google_schema://$google_host"))
-      return NGX_CONF_ERROR;
-  }
-  
-  return NGX_CONF_OK;
+  if (ngx_http_google_inject_subs_args(cf,
+                                       "subs_filter", 2,
+                                       "$google_schema_reverse://$google_host",
+                                       "$google_schema"      "://$google_host"))
+    return NGX_CONF_ERROR;
+  else
+    return NGX_CONF_OK;
 }
 
 static char *

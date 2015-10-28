@@ -2,6 +2,7 @@ Nginx Google 扩展
 =================
 
 [![Build Status](https://travis-ci.org/cuber/ngx_http_google_filter_module.svg?branch=dev)](https://travis-ci.org/cuber/ngx_http_google_filter_module)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cuber/ngx_http_google_filter_module?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 #### 扯两句 ####
 `wen.lu` 一路走到现在, 离不开大家的支持!
@@ -17,8 +18,8 @@ location / {
 ```
 > _你没有看错, “一行配置, google 我有！”_   
   
-#### 现在 [g.wen.lu](https://g.wen.lu) 就是由该扩展驱动 ####
-![Demo Site](http://ww2.sinaimg.cn/large/68bd1777gw1eoyba9li7tj212i0lywg8.jpg)
+#### 现在 [gg.wen.lu](https://gg.wen.lu) 就是由该扩展驱动 ####
+![Demo Site](http://ww1.sinaimg.cn/large/68bd1777gw1evqq6k3k1rj212k0nedhw.jpg)
   
 #### 依赖库 ####
   1. [`pcre`](http://www.pcre.org/) *正则*
@@ -109,9 +110,14 @@ make
 sudo make install
 
 #
-# 启动
+# 启动, 安装过程到此结束
 #
 sudo /opt/nginx-1.7.8/sbin/nginx
+
+#
+# 配置修改后, 需要 reload nginx 来让配置生效, 
+#
+sudo /opt/nginx-1.7.8/sbin/nginx -s reload
 ```
 
 ##### 从发行版迁移 #####
@@ -119,7 +125,7 @@ sudo /opt/nginx-1.7.8/sbin/nginx
 #
 # 安装 gcc & git
 #
-apt-get install build-essential git
+apt-get install build-essential git gcc g++ make
 
 #
 # 安装发行版
@@ -229,10 +235,15 @@ apt-get install libpcre3-dev libssl-dev zlib1g-dev libxslt1-dev libgd-dev libgeo
 cp -rf objs/nginx /usr/sbin/nginx
 
 #
-# 重启 nginx
+# 重启 nginx 至此, 迁移工作结束
 # 
 service nginx stop
 service nginx start
+
+#
+# 配置修改后, 需要 restart nginx 来让配置生效
+#
+service nginx restart
 ```
 
 #### 基本配置方法 ####
@@ -395,7 +406,7 @@ server {
 }
 
 upstream www.google.com {
-  server < vps(hk) 的 ip >:80;
+  server < vps(us) 的 ip >:80;
 }
 
 #
