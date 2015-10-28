@@ -236,7 +236,7 @@ static ngx_int_t
 ngx_http_google_request_parse_books(ngx_http_request_t    * r,
                                       ngx_http_google_ctx_t * ctx)
 {
-  if (ngx_http_google_request_parse_cookie_pref(r, ctx)) return NGX_ERROR;
+  if (ngx_http_google_request_parse_cookie_conf(r, ctx)) return NGX_ERROR;
 
   if (ctx->uri->len == 10 && ctx->args) {
 
