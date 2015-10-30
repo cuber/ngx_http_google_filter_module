@@ -27,6 +27,15 @@ location / {
   1. [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) *多重替换*
 
 #### 安装 ####
+
+如果你在使用 Arch Linux，你可以从 AUR 安装 [`nginx-google_filter`](https://aur.archlinux.org/packages/nginx-google_filter/)：
+```bash
+yaourt -S nginx-google_filter
+```
+该 AUR 包中已经包含了一个示例配置文件 `/etc/nginx/google.conf`，将它 `include` 到 `nginx.conf` 中即可开启 Google 之旅。
+
+如果你希望从源码编译，可按照以下步骤操作。
+
 > **以 ubuntu 14.04 为例** 
 > *i386, x86_64 均适用*
 

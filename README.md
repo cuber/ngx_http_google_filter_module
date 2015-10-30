@@ -26,6 +26,15 @@ location / {
   1. [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) *mutiple substitutions support*
 
 #### Installation ####
+
+If you are using Arch Linux, you can install [`nginx-google_filter`](https://aur.archlinux.org/packages/nginx-google_filter/) from AUR:
+```bash
+yaourt -S nginx-google_filter
+```
+A sample configuration file is already shipped as `/etc/nginx/google.conf`, include it in your `nginx.conf` to google on.
+
+Or you can compile from source code following the steps below:
+
 ##### Download sources first #####
 ```
 #
