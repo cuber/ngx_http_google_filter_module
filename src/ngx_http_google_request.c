@@ -238,7 +238,7 @@ ngx_http_google_request_parse_books(ngx_http_request_t    * r,
 {
   if (ngx_http_google_request_parse_cookie_conf(r, ctx)) return NGX_ERROR;
 
-  if (ctx->uri->len == 10 && ctx->args) {
+  if (ctx->uri->len == 12 && ctx->args && ctx->args->nelts) {
 
     u_char * refer = ctx->uri->data + 9;
 
@@ -283,7 +283,7 @@ ngx_http_google_request_parse_books(ngx_http_request_t    * r,
       for (i = 0; i < ctx->args->nelts; i++) {
         kv = hd + i;
         if (!kv->key.len) continue;
-        if (kv->key.len == 1 && *kv->key.data == 'q')
+        if (kv->key.len == 2 && *kv->key.data == 'id')
         {
           strip = 0; break;
         }
@@ -296,9 +296,11 @@ ngx_http_google_request_parse_books(ngx_http_request_t    * r,
     }
   }
 
+  /* ncr does not work at the porting moment
   if (!ctx->ncr && ctx->uri->len == 1) {
     ngx_str_set(ctx->uri, "/ncr");
   }
+  */
 
   ngx_str_set(ctx->pass, "books.google.com");
 
