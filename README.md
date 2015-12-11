@@ -50,7 +50,7 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 ``` bash
 #
 # configure nginx customly
-# replace </path/to/> to your real path
+# replace </path/to/> with your real path
 #
 ./configure \
   <your configuration> \
@@ -62,7 +62,7 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 ```bash
 #
 # get the configuration of existed nginx
-# replace </path/to/> to your real path
+# replace </path/to/> with your real path
 #
 </path/to/>nginx -V
 > nginx version: nginx/ <version>
@@ -72,14 +72,14 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 #
 # download the same version of nginx source
 # @see http://nginx.org/en/download.html
-# replace <version> to your nginx version
+# replace <version> with your nginx version
 #
 wget http://nginx.org/download/nginx-<version>.tar.gz
   
 #
 # configure nginx
-# replace <configuration> to your nginx configuration
-# replace </path/to/> to your real path
+# replace <configuration> with your nginx configuration
+# replace </path/to/> with your real path
 #
 ./configure \
   <configuration> \
@@ -116,7 +116,7 @@ location / {
 ```
 
 ##### Google Language #####
-The default language can be set throuth `google_language`, if it is not setup, `zh-CN` will be the default language.
+The default language can be set through `google_language`, if it is not setup, `zh-CN` will be the default language.
 ```nginx
 location / {
   google on;
@@ -170,8 +170,8 @@ uk    -> Ukrainian
 vi    -> Vietnamese
 ```
 
-##### Spider Allowance #####
-The spider of any search engines are now allowed to crawl google mirror.    
+##### Spider Exclusion #####
+The spiders of any search engines are not allowed to crawl google mirror.    
 Default `robots.txt` listed below was build-in aleady.
 ```txt
 User-agent: *
@@ -188,7 +188,7 @@ If `google_robots_allow` set to `on`, the `robots.txt` will be replaced with the
 ```
 
 ##### Upstreaming #####
-`upstream` can help you to avoid name resolving cost, decrease the possibility of google robot detection and proxy throuth some specific servers.   
+`upstream` can help you to avoid name resolving cost, decrease the possibility of google robot detection and proxy through some specific servers.   
 ``` nginx
 upstream www.google.com {
   server 173.194.38.1:443;
@@ -198,9 +198,9 @@ upstream www.google.com {
 }
 ```
 
-##### Proxy Protocal #####
-In default, the proxy will use `https` to communicate with backend servers.      
-You can use `google_ssl_off` to force some domains fall back to `http` protocal.      
+##### Proxy Protocol #####
+By default, the proxy will use `https` to communicate with backend servers.      
+You can use `google_ssl_off` to force some domains to fall back to `http` protocol.      
 It is useful, if you want to proxy some domains through another gateway without ssl certificate.
 ```nginx
 #
