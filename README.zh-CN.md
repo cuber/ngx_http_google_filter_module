@@ -18,8 +18,8 @@ location / {
 ```
 > _你没有看错, “一行配置, google 我有！”_   
   
-#### 现在 [gg.wen.lu](https://gg.wen.lu) 就是由该扩展驱动 ####
-![Demo Site](http://ww1.sinaimg.cn/large/68bd1777gw1evqq6k3k1rj212k0nedhw.jpg)
+#### 现在 [g1.wen.lu](https://g1.wen.lu) 就是由该扩展驱动 ####
+![Demo Site](http://ww4.sinaimg.cn/large/68bd1777gw1eyw8kjbsmsj21260n7taw.jpg)
   
 #### 依赖库 ####
   1. [`pcre`](http://www.pcre.org/) *正则*
@@ -49,7 +49,7 @@ wget "http://nginx.org/download/nginx-1.7.8.tar.gz"
 # pcre 官网:
 # http://www.pcre.org/
 #
-wget "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.36.tar.gz"
+wget "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.38.tar.gz"
 
 #
 # 下载最新版 openssl
@@ -80,7 +80,7 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 # 解压缩
 #
 tar xzvf nginx-1.7.8.tar.gz
-tar xzvf pcre-8.36.tar.gz
+tar xzvf pcre-8.38.tar.gz
 tar xzvf openssl-1.0.1j.tar.gz
 tar xzvf zlib-1.2.8.tar.gz
 
@@ -94,7 +94,7 @@ cd nginx-1.7.8
 #
 ./configure \
   --prefix=/opt/nginx-1.7.8 \
-  --with-pcre=../pcre-8.36 \
+  --with-pcre=../pcre-8.38 \
   --with-openssl=../openssl-1.0.1j \
   --with-zlib=../zlib-1.2.8 \
   --with-http_ssl_module \
@@ -374,12 +374,23 @@ Disallow: /
 
 ##### Upstreaming #####
 `upstream` 减少一次域名解析的开销, 并且通过配置多个网段的 google ip 能够一定程度上减少被 google 机器人识别程序侦测到的几率 (弹验证码).
+```bash
+# 可以通过如下方法获取 google ip
+➜  ~  dig www.google.com @8.8.8.8 +short
+173.194.38.209
+173.194.38.211
+173.194.38.212
+173.194.38.210
+173.194.38.208
+```
+然后将获取到的 ip 配置如下即可
 ``` nginx
 upstream www.google.com {
-  server 173.194.38.1:443;
-  server 173.194.38.2:443;
-  server 173.194.38.3:443;
-  server 173.194.38.4:443;
+  server 173.194.38.209:443;
+  server 173.194.38.211:443;
+  server 173.194.38.212:443;
+  server 173.194.38.210:443;
+  server 173.194.38.208:443;
 }
 ```
 

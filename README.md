@@ -17,8 +17,8 @@ location / {
 > _What? Are you kidding me?_   
 > _Yes, it's just that simple!_
   
-#### Demo site [https://gg.wen.lu](https://gg.wen.lu) ####
-![Demo Site](http://ww1.sinaimg.cn/large/68bd1777gw1evqq6k3k1rj212k0nedhw.jpg)
+#### Demo site [https://g1.wen.lu](https://g1.wen.lu) ####
+![Demo Site](http://ww4.sinaimg.cn/large/68bd1777gw1eyw8kjbsmsj21260n7taw.jpg)
   
 #### Dependency ####
   1. [`pcre`](http://www.pcre.org/) *regular expression support*
@@ -243,6 +243,7 @@ server {
 #### Copyright & License ####
   All codes are under the same [LICENCE](http://nginx.org/LICENSE) with [Nginx](http://nginx.org)    
   Copyright (C) 2014 by Cube.
+
 
 
 
