@@ -20,13 +20,14 @@
 typedef enum {
   ngx_http_google_type_main = 0,
   ngx_http_google_type_verify,
+  ngx_http_google_type_books,
   ngx_http_google_type_scholar,
   ngx_http_google_type_redirect,
 } ngx_http_google_type_t;
 
 typedef struct {
   ngx_str_t   language;
-  ngx_flag_t  enable, robots, scholar;
+  ngx_flag_t  books, enable, robots, scholar;
   ngx_array_t * ssloff; /* array ot ngx_str_t */
 } ngx_http_google_loc_conf_t;
 

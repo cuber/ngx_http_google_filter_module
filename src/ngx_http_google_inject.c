@@ -144,6 +144,20 @@ ngx_http_google_inject_subs(ngx_conf_t * cf)
                                          "$google_host",
                                          "igr"))
       break;
+
+    if (ngx_http_google_inject_subs_args(cf,
+                                         "subs_filter", 3,
+                                         "books\\.google\\.[0-9a-z.]+\\\\?/books",
+                                         "$google_host/books",
+                                         "igr"))
+      break;
+
+    if (ngx_http_google_inject_subs_args(cf,
+                                         "subs_filter", 3,
+                                         "books\\.google\\.[0-9a-z.]+",
+                                         "$google_host/books",
+                                         "igr"))
+      break;
     
     if (ngx_http_google_inject_subs_args(cf,
                                          "subs_filter", 3,
