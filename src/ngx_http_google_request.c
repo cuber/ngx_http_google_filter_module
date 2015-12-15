@@ -91,26 +91,6 @@ ngx_http_google_request_parse_cookie_gz(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
-ngx_http_google_request_parse_cookie_conf(ngx_http_request_t    * r,
-                                          ngx_http_google_ctx_t * ctx)
-{
-  ngx_uint_t i;
-  ngx_keyval_t * kv, * hd = ctx->cookies->elts;
-  
-  for (i = 0; i < ctx->cookies->nelts; i++)
-  {
-    kv = hd + i;
-    if (ngx_strncasecmp(kv->key.data, ctx->conf->data, ctx->conf->len)) continue;
-    // find cr
-    u_char * last = kv->value.data + kv->value.len;
-    if (ngx_strlcasestrn(kv->value.data, last, (u_char *)"CR=", 2)) ctx->ncr = 1;
-    break;
-  }
-  
-  return NGX_OK;
-}
-
-static ngx_int_t
 ngx_http_google_request_parse_redirect(ngx_http_request_t    * r,
                                        ngx_http_google_ctx_t * ctx)
 {
@@ -136,8 +116,6 @@ static ngx_int_t
 ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
                                       ngx_http_google_ctx_t * ctx)
 {
-  if (ngx_http_google_request_parse_cookie_conf(r, ctx)) return NGX_ERROR;
-  
   if (ctx->uri->len == 12 && ctx->args && ctx->args->nelts) {
     
     u_char * refer = ctx->uri->data + 9;
@@ -223,10 +201,6 @@ ngx_http_google_request_parse_scholar(ngx_http_request_t    * r,
     }
   }
   
-  if (!ctx->ncr && ctx->uri->len == 1) {
-    ngx_str_set(ctx->uri, "/ncr");
-  }
-  
   ngx_str_set(ctx->pass, "scholar.google.com");
   
   return NGX_OK;
@@ -254,17 +228,27 @@ ngx_http_google_request_parse_main(ngx_http_request_t    * r,
 {
   ngx_str_set(ctx->pass, "www.google.com");
   
-  if (ngx_http_google_request_parse_cookie_gz  (r, ctx)) return NGX_ERROR;
+  if (ngx_http_google_request_parse_cookie_gz(r, ctx)) return NGX_ERROR;
   if (ctx->robots) return NGX_OK;
-  if (ngx_http_google_request_parse_cookie_conf(r, ctx)) return NGX_ERROR;
   
-  if (ctx->ncr) return NGX_OK;
+  ngx_uint_t i, gws_rd = 0;
+  ngx_keyval_t * kv, * hd = ctx->args->elts;
   
-  if ((ctx->uri->len == 1 && *ctx->uri->data == '/') ||
-      (ctx->uri->len == 6 &&
-       !ngx_strncasecmp(ctx->uri->data, (u_char *)"/webhp", 6)))
+  // traverse args
+  for (i = 0; i < ctx->args->nelts; i++)
   {
-    ngx_str_set(ctx->uri, "/ncr");
+    kv = hd + i;
+    if (kv->key.len != 6) continue;
+    if (ngx_strncasecmp(kv->key.data, (u_char *)"gws_rd", 6)) continue;
+    ngx_str_set(&kv->value, "cr");
+    gws_rd = 1;
+  }
+  
+  if (!gws_rd) {
+    kv = ngx_array_push(ctx->args);
+    if (!kv) return NGX_ERROR;
+    ngx_str_set(&kv->key,   "gws_rd");
+    ngx_str_set(&kv->value, "cr");
   }
   
   return NGX_OK;

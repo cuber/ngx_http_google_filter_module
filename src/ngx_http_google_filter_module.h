@@ -15,7 +15,7 @@
 
 #include <assert.h>
 
-#define NGX_HTTP_GOOGLE_FILTER_MODULE_VERSION "0.1.9"
+#define NGX_HTTP_GOOGLE_FILTER_MODULE_VERSION "0.2.0"
 
 typedef enum {
   ngx_http_google_type_main = 0,
@@ -37,7 +37,7 @@ typedef struct {
 } ngx_http_google_main_conf_t;
 
 typedef struct {
-  ngx_int_t     ssl, ncr, robots;
+  ngx_int_t     ssl, robots;
   ngx_str_t   * domain, * host, * pass, * lang, * conf, * uri, * arg;
   ngx_array_t * args, * cookies; /* array of ngx_keyval_t */
   ngx_http_google_type_t type;

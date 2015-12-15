@@ -128,7 +128,6 @@ ngx_http_google_response_header_set_cookie_conf(ngx_http_request_t    * r,
 {
   if (ctx->type != ngx_http_google_type_main &&
       ctx->type != ngx_http_google_type_scholar) return NGX_OK;
-  if (ctx->ncr)                                  return NGX_OK;
   
   ngx_uint_t i;
   ngx_array_t * kvs  = ngx_http_google_explode_kv(r, v, ":");
