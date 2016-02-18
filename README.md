@@ -17,8 +17,8 @@ location / {
 > _What? Are you kidding me?_   
 > _Yes, it's just that simple!_
   
-#### Demo site [https://g1.wen.lu](https://g1.wen.lu) ####
-![Demo Site](http://ww4.sinaimg.cn/large/68bd1777gw1eyw8kjbsmsj21260n7taw.jpg)
+#### Demo site [https://g2.wen.lu](https://g2.wen.lu) ####
+![Demo Site](http://ww2.sinaimg.cn/large/68bd1777gw1f13naidonmj212i0najsy.jpg)
   
 #### Dependency ####
   1. [`pcre`](http://www.pcre.org/) *regular expression support*

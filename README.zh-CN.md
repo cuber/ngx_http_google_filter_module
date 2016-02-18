@@ -18,8 +18,8 @@ location / {
 ```
 > _你没有看错, “一行配置, google 我有！”_   
   
-#### 现在 [g1.wen.lu](https://g1.wen.lu) 就是由该扩展驱动 ####
-![Demo Site](http://ww4.sinaimg.cn/large/68bd1777gw1eyw8kjbsmsj21260n7taw.jpg)
+#### 现在 [g2.wen.lu](https://g2.wen.lu) 就是由该扩展驱动 ####
+![Demo Site](http://ww2.sinaimg.cn/large/68bd1777gw1f13naidonmj212i0najsy.jpg)
   
 #### 依赖库 ####
   1. [`pcre`](http://www.pcre.org/) *正则*
