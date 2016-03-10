@@ -6,9 +6,9 @@ Nginx Google 扩展
 
 #### 扯两句 ####
 `wen.lu` 一路走到现在, 离不开大家的支持!
-> 很多朋友通过各种方式问过我: "你丫怎么不开源啊..."     
+> 很多朋友通过各种方式问过我: "你丫怎么不开源啊..."
 > 先向那些朋友道歉啊, 其实不是我不想开源, 只是之前的版本配置实在太复杂.
-> `nginx` 三方扩展用了一大堆, 外加 `lua`, 以及突破千行的配置`工程`, 这么拙劣的技艺, 实在不好意思拿出来分享      
+> `nginx` 三方扩展用了一大堆, 外加 `lua`, 以及突破千行的配置`工程`, 这么拙劣的技艺, 实在不好意思拿出来分享
 
 遂决定写一个扩展, 让`google`反代的配置和使用`wen.lu`一样简单.
 ```nginx
@@ -16,18 +16,18 @@ location / {
   google on;
 }
 ```
-> _你没有看错, “一行配置, google 我有！”_   
-  
+> _你没有看错, “一行配置, google 我有！”_
+
 #### 现在 [g2.wen.lu](https://g2.wen.lu) 就是由该扩展驱动 ####
 ![Demo Site](http://ww2.sinaimg.cn/large/68bd1777gw1f13naidonmj212i0najsy.jpg)
-  
+
 #### 依赖库 ####
   1. [`pcre`](http://www.pcre.org/) *正则*
   1. [`ngx_http_proxy_module`](http://nginx.org/en/docs/http/ngx_http_proxy_module.html) *反向代理*
   1. [`ngx_http_substitutions_filter_module`](https://github.com/yaoweibin/ngx_http_substitutions_filter_module) *多重替换*
 
 #### 安装 ####
-> **以 ubuntu 14.04 为例** 
+> **以 ubuntu 14.04 为例**
 > *i386, x86_64 均适用*
 
 ##### 最简安装 #####
@@ -39,10 +39,10 @@ apt-get install build-essential git gcc g++ make
 
 #
 # 下载最新版源码
-# nginx 官网: 
+# nginx 官网:
 # http://nginx.org/en/download.html
 #
-wget "http://nginx.org/download/nginx-1.7.8.tar.gz"
+wget "http://nginx.org/download/nginx-1.9.12.tar.gz"
 
 #
 # 下载最新版 pcre
@@ -56,7 +56,7 @@ wget "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.38.tar.gz"
 # opessl 官网:
 # https://www.openssl.org/
 #
-wget "https://www.openssl.org/source/openssl-1.0.1j.tar.gz"
+wget "https://www.openssl.org/source/openssl-1.0.1s.tar.gz"
 
 #
 # 下载最新版 zlib
@@ -79,28 +79,28 @@ git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 #
 # 解压缩
 #
-tar xzvf nginx-1.7.8.tar.gz
+tar xzvf nginx-1.9.12.tar.gz
 tar xzvf pcre-8.38.tar.gz
-tar xzvf openssl-1.0.1j.tar.gz
+tar xzvf openssl-1.0.1s.tar.gz
 tar xzvf zlib-1.2.8.tar.gz
 
 #
 # 进入 nginx 源码目录
 #
-cd nginx-1.7.8
+cd nginx-1.9.12
 
 #
 # 设置编译选项
 #
 ./configure \
-  --prefix=/opt/nginx-1.7.8 \
+  --prefix=/opt/nginx-1.9.12 \
   --with-pcre=../pcre-8.38 \
-  --with-openssl=../openssl-1.0.1j \
+  --with-openssl=../openssl-1.0.1s \
   --with-zlib=../zlib-1.2.8 \
   --with-http_ssl_module \
   --add-module=../ngx_http_google_filter_module \
   --add-module=../ngx_http_substitutions_filter_module
-  
+
 #
 # 编译, 安装
 # 如果扩展有报错, 请发 issue 到
@@ -112,12 +112,12 @@ sudo make install
 #
 # 启动, 安装过程到此结束
 #
-sudo /opt/nginx-1.7.8/sbin/nginx
+sudo /opt/nginx-1.9.12/sbin/nginx
 
 #
-# 配置修改后, 需要 reload nginx 来让配置生效, 
+# 配置修改后, 需要 reload nginx 来让配置生效,
 #
-sudo /opt/nginx-1.7.8/sbin/nginx -s reload
+sudo /opt/nginx-1.9.12/sbin/nginx -s reload
 ```
 
 ##### 从发行版迁移 #####
@@ -140,7 +140,7 @@ nginx -V
 # nginx version: nginx/1.4.7
 # built by gcc 4.8.2 (Ubuntu 4.8.2-19ubuntu1)
 # TLS SNI support enabled
-# configure arguments: 
+# configure arguments:
 #  --with-cc-opt='-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2' \
 #  --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' \
 #  --prefix=/usr/share/nginx \
@@ -173,7 +173,7 @@ nginx -V
 
 #
 # 下载对应 nginx 大版本
-# nginx 官网: 
+# nginx 官网:
 # http://nginx.org/en/download.html
 #
 wget "http://nginx.org/download/nginx-1.4.7.tar.gz"
@@ -226,9 +226,10 @@ apt-get install libpcre3-dev libssl-dev zlib1g-dev libxslt1-dev libgd-dev libgeo
   --with-http_xslt_module \
   --with-mail \
   --with-mail_ssl_module \
+  --with-http_v2_module
   --add-module=../ngx_http_google_filter_module \
   --add-module=../ngx_http_substitutions_filter_module
-  
+
 #
 # 覆盖二进制文件
 #
@@ -236,7 +237,7 @@ cp -rf objs/nginx /usr/sbin/nginx
 
 #
 # 重启 nginx 至此, 迁移工作结束
-# 
+#
 service nginx stop
 service nginx start
 
@@ -290,8 +291,8 @@ server {
 ```
 
 ##### 谷歌学术 #####
-`google_scholar` 依赖于 `google`, 所以 `google_scholar` 无法独立使用.    
-由于谷歌学术近日升级, 强制使用 `https` 协议, 并且 `ncr` 已经支持, 所以不再需要指定谷歌学术的 `tld`     
+`google_scholar` 依赖于 `google`, 所以 `google_scholar` 无法独立使用.
+由于谷歌学术近日升级, 强制使用 `https` 协议, 并且 `ncr` 已经支持, 所以不再需要指定谷歌学术的 `tld`
 配置 nginx
 ``` nginx
 location / {
@@ -307,7 +308,7 @@ location / {
   google on;
   google_scholar on;
   # 设置成德文
-  google_language "de"; 
+  google_language "de";
 }
 ```
 
@@ -356,12 +357,12 @@ vi    -> 越南
 ```
 
 ##### 搜索引擎爬虫许可 #####
-任何搜索引擎爬虫都不被允许爬取 google 镜像       
+任何搜索引擎爬虫都不被允许爬取 google 镜像
 如下的默认 `robots.txt` 已经内置.
 ```txt
 User-agent: *
 Disallow: /
-```     
+```
 如果想要使用 `google` 自己的 `robots.txt` 请将 `google_robots_allow` 设为 `on`
 ```nginx
   #...
@@ -395,8 +396,8 @@ upstream www.google.com {
 ```
 
 ##### Proxy Protocal #####
-默认采用 `https` 与后端服务器通信.    
-你可以使用 `google_ssl_off` 来强制将一些域降到 `http` 协议.    
+默认采用 `https` 与后端服务器通信.
+你可以使用 `google_ssl_off` 来强制将一些域降到 `http` 协议.
 这个设置可以让一些需要二次转发的域通过 `http` 协议进行转发, 从而不再依赖 `ssl` 证书.
 ```nginx
 #
@@ -435,8 +436,5 @@ server {
 ```
 
 #### Copyright & License ####
-  所有代码都遵循与 [Nginx](http://nginx.org/LICENSE) 相同的开源协议   
+  所有代码都遵循与 [Nginx](http://nginx.org/LICENSE) 相同的开源协议
   Copyright (C) 2014 by Cube.
-
-
-
