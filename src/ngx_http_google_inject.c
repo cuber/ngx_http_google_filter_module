@@ -228,12 +228,6 @@ ngx_http_google_inject_proxy(ngx_conf_t * cf)
                                           "$proxy_add_x_forwarded_for"))
       break;
     
-    if (ngx_http_google_inject_proxy_args(cf,
-                                          "proxy_set_header", 2,
-                                          "Referer",
-                                          "$google"))
-      break;
-    
     return NGX_CONF_OK;
   } while (0);
   return NGX_CONF_ERROR;
