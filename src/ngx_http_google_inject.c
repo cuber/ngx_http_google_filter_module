@@ -218,6 +218,12 @@ ngx_http_google_inject_proxy(ngx_conf_t * cf)
     
     if (ngx_http_google_inject_proxy_args(cf,
                                           "proxy_set_header", 2,
+                                          "Referer",
+                                          "$google"))
+      break;
+    
+    if (ngx_http_google_inject_proxy_args(cf,
+                                          "proxy_set_header", 2,
                                           "X-Real-Ip",
                                           "$remote_addr"))
       break;
