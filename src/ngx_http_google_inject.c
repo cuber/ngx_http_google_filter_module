@@ -12,7 +12,7 @@ extern ngx_module_t ngx_http_proxy_module;
 extern ngx_module_t ngx_http_subs_filter_module;
 
 static char *
-ngx_http_google_injcet_args(ngx_conf_t  *  cf,
+ngx_http_google_inject_args(ngx_conf_t  *  cf,
                             ngx_array_t ** args,
                             const char  *  v)
 {
@@ -41,7 +41,7 @@ ngx_http_google_inject(ngx_conf_t   * cf,
   cf->args = NULL;
   
   // push command first
-  if (ngx_http_google_injcet_args(cf, &cf->args, k)) {
+  if (ngx_http_google_inject_args(cf, &cf->args, k)) {
     cf->args = swap;
     return NGX_CONF_ERROR;
   }
@@ -50,7 +50,7 @@ ngx_http_google_inject(ngx_conf_t   * cf,
   const char * arg;
   for (i = 0; i < n; i++) {
     arg = va_arg(ap, const char *);
-    if (ngx_http_google_injcet_args(cf, &cf->args, arg)) {
+    if (ngx_http_google_inject_args(cf, &cf->args, arg)) {
       cf->args = swap;
       return NGX_CONF_ERROR;
     }
