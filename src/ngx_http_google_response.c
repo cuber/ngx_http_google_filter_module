@@ -105,7 +105,7 @@ ngx_http_google_response_header_set_cookie_exempt(ngx_http_request_t    * r,
     }
     
     if (!ngx_strncasecmp(kv->key.data, (u_char *)"expires", 7)) {
-      ngx_str_set(&kv->value, "Fri, 01-Jan-2017 00:00:00 GMT");
+      ngx_str_set(&kv->value, "Fri, 01-Jan-2028 00:00:00 GMT");
     }
   }
   
