@@ -1,4 +1,12 @@
 ngx_addon_name=ngx_http_google_filter_module
-HTTP_AUX_FILTER_MODULES="$HTTP_AUX_FILTER_MODULES ngx_http_google_filter_module"
-NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/*.c"
-NGX_ADDON_DEPS="$NGX_ADDON_DEPS $ngx_addon_dir/src/*.h"
+if test -n "$ngx_module_link"; then
+    ngx_module_type=FILTER
+    ngx_module_name=ngx_http_google_filter_module
+    ngx_module_srcs="$ngx_addon_dir/src/*.c"
+
+    . auto/module
+else
+    HTTP_AUX_FILTER_MODULES="$HTTP_AUX_FILTER_MODULES ngx_http_google_filter_module"
+    NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/*.c"
+    NGX_ADDON_DEPS="$NGX_ADDON_DEPS $ngx_addon_dir/src/*.h"
+fi
