@@ -113,61 +113,6 @@ ngx_http_google_response_header_set_cookie_exempt(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
-ngx_http_google_response_header_sort_cookie_conf(const void * a, const void * b)
-{
-  const ngx_keyval_t * kva = a, * kvb = b;
-  if (kva->key.len < kvb->key.len) return  1;
-  if (kva->key.len > kvb->key.len) return -1;
-  return 0;
-}
-
-static ngx_int_t
-ngx_http_google_response_header_set_cookie_conf(ngx_http_request_t    * r,
-                                                ngx_http_google_ctx_t * ctx,
-                                                ngx_str_t             * v)
-{
-  if (ctx->type != ngx_http_google_type_main &&
-      ctx->type != ngx_http_google_type_scholar) return NGX_OK;
-  
-  ngx_uint_t i;
-  ngx_array_t * kvs  = ngx_http_google_explode_kv(r, v, ":");
-  if (!kvs) return NGX_ERROR;
-  
-  ngx_int_t nw = 0;
-  ngx_keyval_t * kv, * hd;
-  
-  hd = kvs->elts;
-  for (i = 0; i < kvs->nelts; i++) {
-    kv = hd + i;
-    if (!ngx_strncasecmp(kv->key.data, (u_char *)"LD", 2)) {
-      if (ctx->lang->len) kv->value = *ctx->lang;
-      else {
-        ngx_str_set(&kv->value, "zh-CN");
-      }
-    }
-    if (!ngx_strncasecmp(kv->key.data, (u_char *)"NW", 2)) nw = 1;
-  }
-  
-  if (!nw) {
-    kv = ngx_array_push(kvs);
-    if (!kv) return NGX_ERROR;
-    ngx_str_set(&kv->key,   "NW");
-    ngx_str_set(&kv->value, "1");
-  }
-
-  // sort with length
-  ngx_sort(kvs->elts, kvs->nelts, sizeof(ngx_keyval_t),
-           ngx_http_google_response_header_sort_cookie_conf);
-  
-  ngx_str_t * nv = ngx_http_google_implode_kv(r, kvs, ":");
-  if (!nv) return NGX_ERROR;
-  
-  *v = *nv;
-  
-  return NGX_OK;
-}
-
-static ngx_int_t
 ngx_http_google_response_header_set_cookie(ngx_http_request_t    * r,
                                            ngx_http_google_ctx_t * ctx,
                                            ngx_table_elt_t       * tb)
@@ -181,13 +126,6 @@ ngx_http_google_response_header_set_cookie(ngx_http_request_t    * r,
   for (i = 0; i < kvs->nelts; i++)
   {
     kv = hd + i;
-    
-    if (!ngx_strncasecmp(kv->key.data, ctx->conf->data, ctx->conf->len))
-    {
-      if (ngx_http_google_response_header_set_cookie_conf(r, ctx, &kv->value)) {
-        return NGX_ERROR;
-      }
-    }
     
     if (!ngx_strncasecmp(kv->key.data, (u_char *)"GOOGLE_ABUSE_EXEMPTION", 22))
     {

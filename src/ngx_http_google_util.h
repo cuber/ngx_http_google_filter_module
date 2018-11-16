@@ -35,6 +35,9 @@ ngx_http_google_implode_kv(ngx_http_request_t * r,
                            const char         * de);
 
 ngx_int_t
+ngx_http_google_sort_cookie_conf(const void *, const void *);
+
+ngx_int_t
 ngx_http_google_debug(ngx_pool_t * pool, const char * fmt, ...);
 
 

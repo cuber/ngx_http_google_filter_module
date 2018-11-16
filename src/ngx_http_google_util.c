@@ -145,6 +145,15 @@ ngx_http_google_implode_kv(ngx_http_request_t * r,
 }
 
 ngx_int_t
+ngx_http_google_sort_cookie_conf(const void * a, const void * b)
+{
+  const ngx_keyval_t * kva = a, * kvb = b;
+  if (kva->key.len < kvb->key.len) return  1;
+  if (kva->key.len > kvb->key.len) return -1;
+  return 0;
+}
+
+ngx_int_t
 ngx_http_google_debug(ngx_pool_t * pool, const char * fmt, ...)
 {
   u_char   * buf;
