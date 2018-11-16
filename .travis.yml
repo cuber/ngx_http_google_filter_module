@@ -5,24 +5,24 @@ compiler:
   - gcc
 
 script: 
-  - wget "http://nginx.org/download/nginx-1.7.8.tar.gz" 
-  - git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module 
-  - tar xzvf nginx-1.7.8.tar.gz 
-  - cd nginx-1.7.8 
+  - wget "http://nginx.org/download/nginx-1.15.6.tar.gz"
+  - git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
+  - tar xzvf nginx-1.15.6.tar.gz
+  - cd nginx-1.15.6
   - ./configure
    --prefix=../nginx-build
    --add-module=../ngx_http_substitutions_filter_module
-   --add-module=../ 
+   --add-module=../
   - make
   - make install
   - echo "
    daemon on;
    worker_processes  1;
-   
+
    events {
      worker_connections  1024;
    }
-   
+
    http {
      include       mime.types;
      default_type  application/octet-stream;
