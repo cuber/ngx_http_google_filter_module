@@ -31,7 +31,7 @@ ngx_http_google_create_ctx(ngx_http_request_t * r)
   if (!ctx->domain) return NULL;
   
   // default conf key
-  ngx_str_set(ctx->conf, "PREF");
+  // ngx_str_set(ctx->conf, "PREF");
   
   ctx->uri  = &r->unparsed_uri;
   ctx->host = &r->headers_in.host->value;
@@ -231,7 +231,7 @@ ngx_http_google_request_parse_main(ngx_http_request_t    * r,
   if (ngx_http_google_request_parse_cookie_gz(r, ctx)) return NGX_ERROR;
   if (ctx->robots) return NGX_OK;
   
-  ngx_uint_t i, gws_rd = 0;
+  ngx_uint_t i, gws_rd = 0, nw = 0, safe = 0, hl = 0;
   ngx_keyval_t * kv, * hd = ctx->args->elts;
   
   // traverse args
@@ -239,9 +239,25 @@ ngx_http_google_request_parse_main(ngx_http_request_t    * r,
   {
     kv = hd + i;
     if (kv->key.len != 6) continue;
-    if (ngx_strncasecmp(kv->key.data, (u_char *)"gws_rd", 6)) continue;
-    ngx_str_set(&kv->value, "cr");
-    gws_rd = 1;
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"gws_rd", 6)) {
+      ngx_str_set(&kv->value, "cr");
+      gws_rd = 1;
+    }
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"newwindow", 9)) {
+      ngx_str_set(&kv->value, "1");
+      nw = 1;
+    }
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"safe", 4)) {
+      ngx_str_set(&kv->value, "off");
+      safe = 1;
+    }
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"hl", 2)) {
+      if (ctx->lang->len) kv->value = *ctx->lang;
+      else {
+        ngx_str_set(&kv->value, "zh-CN");
+      }
+      hl = 1;
+    }
   }
   
   if (!gws_rd) {
@@ -249,6 +265,30 @@ ngx_http_google_request_parse_main(ngx_http_request_t    * r,
     if (!kv) return NGX_ERROR;
     ngx_str_set(&kv->key,   "gws_rd");
     ngx_str_set(&kv->value, "cr");
+  }
+  
+  if (!nw) {
+    kv = ngx_array_push(ctx->args);
+    if (!kv) return NGX_ERROR;
+    ngx_str_set(&kv->key,   "newwindow");
+    ngx_str_set(&kv->value, "1");
+  }
+  
+  if (!safe) {
+    kv = ngx_array_push(ctx->args);
+    if (!kv) return NGX_ERROR;
+    ngx_str_set(&kv->key,   "safe");
+    ngx_str_set(&kv->value, "off");
+  }
+  
+  if (!hl) {
+    kv = ngx_array_push(ctx->args);
+    if (!kv) return NGX_ERROR;
+    ngx_str_set(&kv->key, "hl");
+    if (ctx->lang->len) kv->value = *ctx->lang;
+    else {
+      ngx_str_set(&kv->value, "zh-CN");
+    }
   }
   
   return NGX_OK;
@@ -299,6 +339,85 @@ ngx_http_google_request_parse_host(ngx_http_request_t    * r,
 }
 
 static ngx_int_t
+ngx_http_google_request_parse_cookie_conf(ngx_http_request_t    * r,
+                                          ngx_http_google_ctx_t * ctx,
+                                          ngx_str_t             * v)
+{
+  if (ctx->type == ngx_http_google_type_redirect) return NGX_OK;
+  
+  ngx_uint_t i;
+  ngx_array_t * kvs  = ngx_http_google_explode_kv(r, v, ":");
+  if (!kvs) return NGX_ERROR;
+  
+  ngx_int_t nw = 0, ld = 0;
+  ngx_keyval_t * kv, * hd;
+  
+  hd = kvs->elts;
+  for (i = 0; i < kvs->nelts; i++) {
+    kv = hd + i;
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"LD", 2)) {
+      if (ctx->lang->len) kv->value = *ctx->lang;
+      else {
+        ngx_str_set(&kv->value, "zh-CN");
+      }
+      ld = 1;
+    }
+    if (!ngx_strncasecmp(kv->key.data, (u_char *)"NW", 2)) nw = 1;
+  }
+  
+  if (!nw) {
+    kv = ngx_array_push(kvs);
+    if (!kv) return NGX_ERROR;
+    ngx_str_set(&kv->key,   "NW");
+    ngx_str_set(&kv->value, "1");
+  }
+  
+  if (!ld) {
+    kv = ngx_array_push(kvs);
+    if (!kv) return NGX_ERROR;
+    ngx_str_set(&kv->key, "LD");
+    if (ctx->lang->len) kv->value = *ctx->lang;
+    else {
+      ngx_str_set(&kv->value, "zh-CN");
+    }
+  }
+
+  // sort with length
+  ngx_sort(kvs->elts, kvs->nelts, sizeof(ngx_keyval_t),
+           ngx_http_google_sort_cookie_conf);
+  
+  ngx_str_t * nv = ngx_http_google_implode_kv(r, kvs, ":");
+  if (!nv) return NGX_ERROR;
+  
+  *v = *nv;
+  
+  return NGX_OK;
+}
+
+static ngx_int_t
+ngx_http_google_request_parse_cookie(ngx_http_request_t    * r,
+                                     ngx_http_google_ctx_t * ctx)
+{
+  ngx_uint_t i;
+  ngx_keyval_t * kv, * hd = ctx->cookies->elts;
+  
+  if (!ctx->conf->len) return NGX_OK;
+  
+  for (i = 0; i < ctx->cookies->nelts; i++)
+  {
+    kv = hd + i;
+    
+    if (ngx_strncasecmp(kv->key.data, ctx->conf->data, ctx->conf->len)) continue;
+    
+    if (ngx_http_google_request_parse_cookie_conf(r, ctx, &kv->value)) {
+      return NGX_ERROR;
+    }
+  }
+  
+  return NGX_OK;
+}
+
+static ngx_int_t
 ngx_http_google_request_parser(ngx_http_request_t    * r,
                                ngx_http_google_ctx_t * ctx)
 {
@@ -331,6 +450,8 @@ ngx_http_google_request_parser(ngx_http_request_t    * r,
   
   // parse host
   if (ngx_http_google_request_parse_host(r, ctx)) return NGX_ERROR;
+  // parse cookie
+  if (ngx_http_google_request_parse_cookie(r, ctx)) return NGX_ERROR;
   
   // traverse headers
   ngx_uint_t i, acl = 0;

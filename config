@@ -1,6 +1,6 @@
 ngx_addon_name=ngx_http_google_filter_module
 if test -n "$ngx_module_link"; then
-    ngx_module_type=FILTER
+    ngx_module_type=HTTP_FILTER
     ngx_module_name=ngx_http_google_filter_module
     ngx_module_srcs="$ngx_addon_dir/src/*.c"
 
